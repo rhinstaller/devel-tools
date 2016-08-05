@@ -77,137 +77,139 @@ class Branch(Enum):
 
 
 class GeneralBranch(object):
-    def __init__(self, branch_type, version=[], img_name="master_updates", mkupdates_args=[],
+    def __init__(self, branch_type,
+                 cmd_args, help,
+                 version="", version_script_params=[], img_name="master_updates.img",
+                 mkupdates_args=[],
                  blivet_args=["-i", "blivet"], pykickstart_args=["-i", "pykickstart"]):
-        if not self.type:
-            self.type = Branch.Nothing
 
-        self.version = ""
-        self.img_name = "master_updates.img"
-        self.input_args = []
-        self.blivet_args = ["-i", "blivet*"]
-        self.pykickstart_args = ["-i", "pykickstart*"]
+        self.type = branch_type
+        self.cmd_args = cmd_args
+        self.help = help
+        self.version = version
+        self.img_name = img_name
+        self.input_args = mkupdates_args
+        self.blivet_args = blivet_args
+        self.pykickstart_args = pykickstart_args
+        self.show_version_params = version_script_params
+
+        if not self.version:
+            self.version = self.get_version()
+            if not self.version:
+                print(self.version)
+                raise ValueError("Anaconda version is not set")
 
         self.prepare_params()
 
-    @classmethod
-    def add_argument(cls, parse_args):
-        parse_args.add_branch_param(*cls.arguments, const_val=cls.type,
-                                    help=cls.help)
+    def add_argument(self, parse_args):
+        parse_args.add_branch_param(*self.cmd_args, const_val=self.type,
+                                    help=self.help)
 
     def get_version(self):
-        self.__class__.version = subprocess.check_output([GlobalSettings.show_version_script_path,
-                                                         self.show_version_params]).decode()[:-1]
+        path = os.path.expanduser(GlobalSettings.show_version_script_path)
+        return subprocess.check_output([path, *self.show_version_params]).decode()[:-1]
 
     def prepare_params(self):
-#        cls = self.__class__
-#        self.type = cls.type
-#        self.version = cls.version
-#        self.img_name = cls.img_name
-#        self.input_args = cls.input_args
-#        self.help = cls.help
+        pass
+
 
 ## Branch specific classes ##
 
 class MasterBranch(GeneralBranch):
-    type = Branch.master
-    arguments = ["-m", "--master"]
-    help = "working on Rawhide"
-    img_name = "master_updates.img"
-    input_args = []
-    version = ""
 
-    def prepare_params(self):
-        self.__class__.version = subprocess.check_output([GlobalSettings.show_version_script_path,
-                                                          "-m", "-p"]).decode()[:-1]
+    def __init__(self):
+        super().__init__(branch_type=Branch.master,
+                         cmd_args=["-m", "--master"], help="working on Rawhide",
+                         version_script_params=["-m", "-p"])
+
         super().prepare_params()
 
 
-class Fedora22Branch(GeneralBranch):
-    type = Branch.fedora22
-    arguments = ["-f22", "--fedora22"]
-    help = "working on Fedora 22"
-    img_name = "master_updates.img"
-    input_args = []
-    version = "22.20.13"
-
-
-class Fedora23Branch(GeneralBranch):
-    type = Branch.fedora23
-    arguments = ["-f23", "--fedora23"]
-    help = "working on Fedora 23"
-    img_name = "master_updates.img"
-    input_args = []
-    version = "23.19.10"
-
-
-class Fedora24Branch(GeneralBranch):
-    type = Branch.fedora24
-    arguments = ["-f24", "--fedora24"]
-    help = "working on Fedora 24"
-    img_name = "master_updates.img"
-    input_args = []
-    version = "24.13.7"
-
-
-class Rhel7Branch(GeneralBranch):
-    type = Branch.rhel7
-    arguments = ["-rh7", "--rhel7"]
-    help = "working on RHEL7"
-    img_name = "rhel7_updates.img"
-    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-    input_args = []
-    version = ""
-
-    def prepare_params(self):
-        self.__class__.version = subprocess.check_output(["./show_version.sh", "-rh7", "-p"]).decode()[:-1]
-        self.blivet_args = []
-        self.pykickstart_args = []
-        super().prepare_params()
-
-
-class Rhel6Branch(GeneralBranch):
-    type = Branch.rhel6
-    arguments = ["-rh6", "--rhel6"]
-    help = "working on RHEL6"
-    img_name = "rhel6_updates.img"
-    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-    input_args = []
-    version = ""
-
-    def prepare_params(self):
-        self.__class__.version = subprocess.check_output(["./show_version.sh", "-rh6", "-p"]).decode()[:-1]
-        GlobalSettings.use_blivet=False
-        GlobalSettings.use_pykickstart=False
-        super().prepare_params()
-
-class Rhel7_1Branch(GeneralBranch):
-    type = Branch.rhel7_1
-    arguments = ["-rh7.1", "--rhel7.1"]
-    help = "working on RHEL7.1"
-    img_name = "rhel7.1_updates.img"
-    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-    input_args = []
-    version = "19.31.123"
-
-    def prepare_params(self):
-        GlobalSettings.use_blivet=False
-        GlobalSettings.use_pykickstart=False
-        super().prepare_params()
-
-class Rhel7_2Branch(GeneralBranch):
-    type = Branch.rhel7_2
-    arguments = ["-rh7.2", "--rhel7.2"]
-    help = "working on RHEL7.2"
-    img_name = "rhel7.2_updates.img"
-    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-    input_args = []
-    version = "21.48.22.56"
-
-    def prepare_params(self):
-        GlobalSettings.use_blivet=False
-        GlobalSettings.use_pykickstart=False
-        super().prepare_params()
+#class Fedora22Branch(GeneralBranch):
+#    type = Branch.fedora22
+#    cmd_args = ["-f22", "--fedora22"]
+#    help = "working on Fedora 22"
+#    img_name = "master_updates.img"
+#    input_args = []
+#    version = "22.20.13"
+#
+#
+#class Fedora23Branch(GeneralBranch):
+#    type = Branch.fedora23
+#    cmd_args = ["-f23", "--fedora23"]
+#    help = "working on Fedora 23"
+#    img_name = "master_updates.img"
+#    input_args = []
+#    version = "23.19.10"
+#
+#
+#class Fedora24Branch(GeneralBranch):
+#    type = Branch.fedora24
+#    cmd_args = ["-f24", "--fedora24"]
+#    help = "working on Fedora 24"
+#    img_name = "master_updates.img"
+#    input_args = []
+#    version = "24.13.7"
+#
+#
+#class Rhel7Branch(GeneralBranch):
+#    type = Branch.rhel7
+#    cmd_args = ["-rh7", "--rhel7"]
+#    help = "working on RHEL7"
+#    img_name = "rhel7_updates.img"
+#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
+#    input_args = []
+#    version = ""
+#
+#    def prepare_params(self):
+#        self.__class__.version = subprocess.check_output(["./show_version.sh", "-rh7", "-p"]).decode()[:-1]
+#        self.blivet_args = []
+#        self.pykickstart_args = []
+#        super().prepare_params()
+#
+#
+#class Rhel6Branch(GeneralBranch):
+#    type = Branch.rhel6
+#    cmd_args = ["-rh6", "--rhel6"]
+#    help = "working on RHEL6"
+#    img_name = "rhel6_updates.img"
+#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
+#    input_args = []
+#    version = ""
+#
+#    def prepare_params(self):
+#        self.__class__.version = subprocess.check_output(["./show_version.sh", "-rh6", "-p"]).decode()[:-1]
+#        GlobalSettings.use_blivet=False
+#        GlobalSettings.use_pykickstart=False
+#        super().prepare_params()
+#
+#class Rhel7_1Branch(GeneralBranch):
+#    type = Branch.rhel7_1
+#    cmd_args = ["-rh7.1", "--rhel7.1"]
+#    help = "working on RHEL7.1"
+#    img_name = "rhel7.1_updates.img"
+#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
+#    input_args = []
+#    version = "19.31.123"
+#
+#    def prepare_params(self):
+#        GlobalSettings.use_blivet=False
+#        GlobalSettings.use_pykickstart=False
+#        super().prepare_params()
+#
+#class Rhel7_2Branch(GeneralBranch):
+#    type = Branch.rhel7_2
+#    cmd_args = ["-rh7.2", "--rhel7.2"]
+#    help = "working on RHEL7.2"
+#    img_name = "rhel7.2_updates.img"
+#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
+#    input_args = []
+#    version = "21.48.22.56"
+#
+#    def prepare_params(self):
+#        GlobalSettings.use_blivet=False
+#        GlobalSettings.use_pykickstart=False
+#        super().prepare_params()
 
 ## Logic code ##
 
@@ -404,16 +406,20 @@ if __name__ == "__main__":
     # parse input arguments
     parser = ParseArgs()
     branch = None
+    instances = []
 
     # setup arg parse
     for cls in GeneralBranch.__subclasses__():
-        cls.add_argument(parser)
+        #cls.add_argument(parser)
+        inst = cls()
+        inst.add_argument(parser)
+        instances.append(inst)
 
     nm = parser.parse_args()
 
-    for branch_cls in GeneralBranch.__subclasses__():
-        if branch_cls.type == nm.branch:
-            branch = branch_cls()
+    for branch_inst in instances:
+        if branch_inst.type == nm.branch:
+            branch = branch_inst
             break
 
     create_cmd = CreateCommand(branch)
