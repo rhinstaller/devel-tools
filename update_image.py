@@ -14,15 +14,6 @@ class DirectoryNotFoundError(Exception):
     pass
 
 
-#class Fedora24Branch(GeneralBranch):
-#    type = Branch.fedora24
-#    cmd_args = ["-f24", "--fedora24"]
-#    help = "working on Fedora 24"
-#    img_name = "master_updates.img"
-#    input_args = []
-#    version = "24.13.7"
-
-
 #class Rhel6Branch(GeneralBranch):
 #    type = Branch.rhel6
 #    cmd_args = ["-rh6", "--rhel6"]
