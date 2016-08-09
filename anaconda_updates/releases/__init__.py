@@ -1,6 +1,6 @@
 __all__ = ["Branch", "GeneralBranch", "master",
            "f22", "f23", "f24",
-           "rhel7", "rhel7_1", "rhel6"]
+           "rhel7", "rhel7_1", "rhel7_2", "rhel6"]
 
 import subprocess
 import os

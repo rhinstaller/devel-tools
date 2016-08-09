@@ -10,23 +10,10 @@ from argparse import ArgumentParser
 from anaconda_updates.releases import *
 from anaconda_updates.settings import GlobalSettings
 
+## Exceptions ##
+
 class DirectoryNotFoundError(Exception):
     pass
-
-
-#class Rhel7_2Branch(GeneralBranch):
-#    type = Branch.rhel7_2
-#    cmd_args = ["-rh7.2", "--rhel7.2"]
-#    help = "working on RHEL7.2"
-#    img_name = "rhel7.2_updates.img"
-#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-#    input_args = []
-#    version = "21.48.22.56"
-#
-#    def prepare_params(self):
-#        GlobalSettings.use_blivet=False
-#        GlobalSettings.use_pykickstart=False
-#        super().prepare_params()
 
 ## Logic code ##
 
