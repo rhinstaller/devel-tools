@@ -44,7 +44,6 @@ class GeneralBranch(object):
                 print(self.version)
                 raise ValueError("Anaconda version is not set")
 
-        self.prepare_params()
 
     def add_argument(self, parse_args):
         parse_args.add_branch_param(*self.cmd_args, const_val=self.type,
@@ -54,5 +53,3 @@ class GeneralBranch(object):
         path = os.path.expanduser(GlobalSettings.show_version_script_path)
         return subprocess.check_output([path, *self.show_version_params]).decode()[:-1]
 
-    def prepare_params(self):
-        pass
