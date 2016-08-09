@@ -41,14 +41,6 @@ class DirectoryNotFoundError(Exception):
 #    version = "24.13.7"
 
 
-#class Rhel7Branch(GeneralBranch):
-#
-#    def __init__(self):
-#        super().__init__(branch_type=Branch.rhel7, img_name="rhel7_updates.img",
-#                         cmd_args=["-rh7", "--rhel7"], help="working on RHEL7",
-#                         version_script_params=["-rh7", "-p"])
-
-
 #class Rhel6Branch(GeneralBranch):
 #    type = Branch.rhel6
 #    cmd_args = ["-rh6", "--rhel6"]

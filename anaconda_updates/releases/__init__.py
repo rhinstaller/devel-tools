@@ -1,4 +1,4 @@
-__all__ = ["Branch", "GeneralBranch", "master"]
+__all__ = ["Branch", "GeneralBranch", "master", "rhel7"]
 
 import subprocess
 import os
