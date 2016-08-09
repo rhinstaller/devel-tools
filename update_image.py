@@ -14,15 +14,6 @@ class DirectoryNotFoundError(Exception):
     pass
 
 
-#class Fedora22Branch(GeneralBranch):
-#    type = Branch.fedora22
-#    cmd_args = ["-f22", "--fedora22"]
-#    help = "working on Fedora 22"
-#    img_name = "master_updates.img"
-#    input_args = []
-#    version = "22.20.13"
-#
-#
 #class Fedora23Branch(GeneralBranch):
 #    type = Branch.fedora23
 #    cmd_args = ["-f23", "--fedora23"]
