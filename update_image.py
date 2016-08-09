@@ -14,20 +14,6 @@ class DirectoryNotFoundError(Exception):
     pass
 
 
-#class Rhel7_1Branch(GeneralBranch):
-#    type = Branch.rhel7_1
-#    cmd_args = ["-rh7.1", "--rhel7.1"]
-#    help = "working on RHEL7.1"
-#    img_name = "rhel7.1_updates.img"
-#    #input_args = ["-i", "blivet*", "-i", "pykickstart*", "-f", "x86_64"]
-#    input_args = []
-#    version = "19.31.123"
-#
-#    def prepare_params(self):
-#        GlobalSettings.use_blivet=False
-#        GlobalSettings.use_pykickstart=False
-#        super().prepare_params()
-#
 #class Rhel7_2Branch(GeneralBranch):
 #    type = Branch.rhel7_2
 #    cmd_args = ["-rh7.2", "--rhel7.2"]
