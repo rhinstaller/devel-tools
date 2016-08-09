@@ -7,7 +7,7 @@ import shutil
 
 from argparse import ArgumentParser
 
-from anaconda_updates import *
+from anaconda_updates.releases import *
 from anaconda_updates.settings import GlobalSettings
 
 class DirectoryNotFoundError(Exception):
