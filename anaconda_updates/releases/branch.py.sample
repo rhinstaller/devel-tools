@@ -1,9 +1,9 @@
 from . import GeneralBranch, Branch
 
-class MasterBranch(GeneralBranch):
+class ExampleBranch(GeneralBranch):
 
     def __init__(self):
-        super().__init__(branch_type=Branch.Unknown,               # branch type from the Branch enum
+        super().__init__(branch_type=Branch.Example,               # branch type from the Branch enum
                          cmd_args=["-ex", "--example"],            # params for this branch on command line
                          help="command line help",                 # command line help line for the params
                                                                    # --------------
