@@ -1,6 +1,7 @@
 __all__ = ["Branch", "GeneralBranch", "master",
            "f22", "f23", "f24",
-           "rhel7", "rhel7_1", "rhel7_2", "rhel6"]
+           "rhel6", "rhel6_8",
+           "rhel7", "rhel7_1", "rhel7_2"]
 
 import subprocess
 import os
@@ -17,6 +18,7 @@ class Branch(Enum):
     fedora24=4,
 
     rhel6=10,
+    rhel6_8=11,
 
     rhel7=20,
     rhel7_1=21,
