@@ -1,7 +1,7 @@
 __all__ = ["Branch", "GeneralBranch", "master",
            "f22", "f23", "f24", "f25",
            "rhel6", "rhel6_8",
-           "rhel7", "rhel7_1", "rhel7_2"]
+           "rhel7", "rhel7_1", "rhel7_2", "rhel7_3"]
 
 import subprocess
 import os
@@ -23,7 +23,8 @@ class Branch(Enum):
 
     rhel7=20,
     rhel7_1=21,
-    rhel7_2=22
+    rhel7_2=22,
+    rhel7_3=23
 
 
 class GeneralBranch(object):

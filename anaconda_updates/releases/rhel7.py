@@ -7,5 +7,6 @@ class Rhel7Branch(GeneralBranch):
                          cmd_args=["-rh7", "--rhel7"],
                          help="working on RHEL7",
                          version_script_params=["-rh7", "-p"],
-                         img_name="rhel7_updates.img")
+                         img_name="rhel7_updates.img",
+                         blivet_args=[], pykickstart_args=[])
 
