@@ -38,6 +38,8 @@ class ParseArgs(ArgumentParser):
                           metavar="version",
                           help=("set target version from command line. Use in git format"
                                 "If not set, use branch specific."))
+        self.add_argument("-n", "--name", dest="image_name", action="store",
+                          help=("set the name of the image"))
         self.add_argument("--blivet", dest="use_blivet", action="store_true",
                           help=("copy blivet to updates image."))
         self.add_argument("--pykickstart", dest="use_pykickstart", action="store_true",
@@ -77,6 +79,8 @@ class ParseArgs(ArgumentParser):
             GlobalSettings.use_blivet=True
         if self.nm.use_pykickstart:
             GlobalSettings.use_pykickstart=True
+        if self.nm.image_name:
+            GlobalSettings.image_name = self.nm.image_name
 
         return self.nm
 
@@ -181,10 +185,10 @@ class Executor(object):
             print(out.decode())
 
     def upload_image(self):
+        img_name = GlobalSettings.image_name if GlobalSettings.image_name is not None else self._branch_obj.img_name
         src = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates.img")
-        dst_local = os.path.join("../images/", self._branch_obj.img_name)
-        dst_srv = os.path.join(GlobalSettings.PXE_server + ":" + GlobalSettings.server_path,
-                               self._branch_obj.img_name)
+        dst_local = os.path.join("../images/", img_name)
+        dst_srv = os.path.join(GlobalSettings.PXE_server + ":" + GlobalSettings.server_path, img_name)
 
         print("Uploading image to server")
         out = subprocess.check_output(["scp", src, dst_srv], stderr=subprocess.STDOUT).decode()
