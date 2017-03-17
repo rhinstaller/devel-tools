@@ -6,4 +6,4 @@ class Fedora25Branch(GeneralBranch):
         super().__init__(branch_type=Branch.fedora25,
                          cmd_args=["-f25", "--fedora25"],
                          help="working on Fedora 25",
-                         version_script_params=["-f25", "-p"])
+                         version="25.20.9")
