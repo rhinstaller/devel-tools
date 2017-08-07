@@ -44,6 +44,8 @@ class ParseArgs(ArgumentParser):
                           help=("copy blivet to updates image."))
         self.add_argument("--pykickstart", dest="use_pykickstart", action="store_true",
                           help=("copy pykickstart to updates image."))
+        self.add_argument("--simpleline", dest="use_simpleline", action="store_true",
+                          help=("copy simpleline to updates image."))
         self.add_argument("--add-addon", dest="add_addon", nargs=1, action="store",
                           metavar="path",
                           help=("add addon to the updates image structure. "
@@ -65,20 +67,22 @@ class ParseArgs(ArgumentParser):
         if self.nm.push_only:
             GlobalSettings.push_only = True
         if self.nm.alternative_dir:
-            GlobalSettings.anaconda_path="anaconda-2"
+            GlobalSettings.anaconda_path = "anaconda-2"
         if self.nm.add_addon:
             expanded = os.path.expanduser(self.nm.add_addon[0])
-            GlobalSettings.AddonDir=os.path.normpath(expanded)
+            GlobalSettings.AddonDir = os.path.normpath(expanded)
         if self.nm.no_fetch:
-            GlobalSettings.auto_fetch=False
+            GlobalSettings.auto_fetch = False
         if self.nm.add_rpm:
             GlobalSettings.add_RPM.extend(self.nm.add_rpm)
         if self.nm.target_version:
-            GlobalSettings.target=self.nm.target_version[0]
+            GlobalSettings.target = self.nm.target_version[0]
         if self.nm.use_blivet:
-            GlobalSettings.use_blivet=True
+            GlobalSettings.use_blivet = True
         if self.nm.use_pykickstart:
-            GlobalSettings.use_pykickstart=True
+            GlobalSettings.use_pykickstart = True
+        if self.nm.use_simpleline:
+            GlobalSettings.use_simpleline = True
         if self.nm.image_name:
             GlobalSettings.image_name = self.nm.image_name
 
@@ -111,6 +115,8 @@ class CreateCommand(object):
                 input_args.extend(self._branch_obj.blivet_args)
             if GlobalSettings.use_pykickstart:
                 input_args.extend(self._branch_obj.pykickstart_args)
+            if GlobalSettings.use_simpleline:
+                input_args.extend(self._branch_obj.simpleline_args)
             if GlobalSettings.auto_fetch:
                 input_args.extend(["-f", "x86_64"])
 
@@ -170,6 +176,15 @@ class Executor(object):
                 shutil.copytree(source, dest)
             except FileExistsError as e:
                 print("Skipping pykickstart copy:", str(e))
+
+        if GlobalSettings.use_simpleline:
+            print("Copy simpleline...")
+            source = os.path.join(GlobalSettings.projects_path, "simpleline/simpleline")
+            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/simpleline")
+            try:
+                shutil.copytree(source, dest)
+            except FileExistsError as e:
+                print("Skipping simpleline copy:", str(e))
 
     def create_updates_img(self, command):
         os.chdir(os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path))
