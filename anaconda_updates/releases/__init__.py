@@ -1,7 +1,7 @@
 __all__ = ["Branch", "GeneralBranch", "master",
            "f22", "f23", "f24", "f25", "f26",
            "rhel6", "rhel6_8",
-           "rhel7", "rhel7_1", "rhel7_2", "rhel7_3"]
+           "rhel7", "rhel7_1", "rhel7_2", "rhel7_3", "rhel7_4"]
 
 import subprocess
 import os
@@ -10,22 +10,23 @@ from enum import Enum
 from anaconda_updates.settings import GlobalSettings
 
 class Branch(Enum):
-    Nothing=0,
+    Nothing  = 0,
 
-    master=1,
-    fedora22=2,
-    fedora23=3,
-    fedora24=4,
-    fedora25=5,
-    fedora26=6,
+    master   = 1,
+    fedora22 = 2,
+    fedora23 = 3,
+    fedora24 = 4,
+    fedora25 = 5,
+    fedora26 = 6,
 
-    rhel6=10,
-    rhel6_8=11,
+    rhel6    = 10,
+    rhel6_8  = 11,
 
-    rhel7=20,
-    rhel7_1=21,
-    rhel7_2=22,
-    rhel7_3=23
+    rhel7    = 20,
+    rhel7_1  = 21,
+    rhel7_2  = 22,
+    rhel7_3  = 23,
+    rhel7_4  = 24,
 
 
 class GeneralBranch(object):

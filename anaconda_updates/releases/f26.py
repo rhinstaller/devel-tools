@@ -6,4 +6,4 @@ class Fedora26Branch(GeneralBranch):
         super().__init__(branch_type=Branch.fedora26,
                          cmd_args=["-f26", "--fedora26"],
                          help="working on Fedora 26",
-                         version_script_params=["-f26", "-p"])
+                         version="26.21.11")
