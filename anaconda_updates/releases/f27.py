@@ -6,4 +6,4 @@ class Fedora27Branch(GeneralBranch):
         super().__init__(branch_type=Branch.fedora27,
                          cmd_args=["-f27", "--fedora27"],
                          help="working on Fedora 27",
-                         version_script_params=["-f27", "-p"])
+                         version="27.20.4")
