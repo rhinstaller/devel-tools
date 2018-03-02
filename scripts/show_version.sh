@@ -38,6 +38,10 @@ do
          PACKAGES_URL="fedora27/Packages/a"
          shift
          ;;
+        -f28)
+         PACKAGES_URL="fedora28/Packages/a"
+         shift
+         ;;
         -p)
          VERSION_ONLY=true
          shift
