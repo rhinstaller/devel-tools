@@ -2,6 +2,7 @@
 from . import GeneralBranch, Branch
 from anaconda_updates.settings import GlobalSettings
 
+
 class Rhel7_3Branch(GeneralBranch):
 
     def __init__(self):
@@ -12,5 +13,5 @@ class Rhel7_3Branch(GeneralBranch):
                          img_name="rhel7.3_updates.img",
                          blivet_args=[], pykickstart_args=[])
 
-        GlobalSettings.use_blivet=False
-        GlobalSettings.use_pykickstart=False
+        GlobalSettings.use_blivet = False
+        GlobalSettings.use_pykickstart = False

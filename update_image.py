@@ -10,13 +10,13 @@ from argparse import ArgumentParser
 from anaconda_updates.releases import *
 from anaconda_updates.settings import GlobalSettings
 
-## Exceptions ##
 
+## Exceptions ##
 class DirectoryNotFoundError(Exception):
     pass
 
-## Logic code ##
 
+## Logic code ##
 class ParseArgs(ArgumentParser):
     def __init__(self):
         super().__init__()
@@ -55,13 +55,12 @@ class ParseArgs(ArgumentParser):
                           help=("add RPM packages to updates image. "
                                 "You can use blob in later make_updates"))
 
-
     def add_branch_param(self, *args, const_val, help):
         self._branch_group.add_argument(*args, dest="branch",
                                         action="store_const", const=const_val,
                                         help=help)
 
-    def parse_args(self):
+    def parse_args(self, **kwargs):
         self.nm = super().parse_args()
 
         if self.nm.push_only:
@@ -133,6 +132,7 @@ class CreateCommand(object):
             cmd.extend(input_args)
 
         return cmd
+
 
 class Executor(object):
     def __init__(self, branch):
@@ -211,9 +211,10 @@ class Executor(object):
         shutil.move(src, dst_local)
         print("Creating backup", dst_local)
 
+
 if __name__ == "__main__":
     try:
-        GlobalSettings.readConfiguration()
+        GlobalSettings.read_configuration()
     except FileNotFoundError as e:
         msg = "Can't open configuration file {}".format(GlobalSettings.CONFIG_PATH)
         print(msg, file=sys.stderr)
@@ -233,7 +234,6 @@ if __name__ == "__main__":
 
     # setup arg parse
     for cls in GeneralBranch.__subclasses__():
-        #cls.add_argument(parser)
         inst = cls()
         inst.add_argument(parser)
         instances.append(inst)

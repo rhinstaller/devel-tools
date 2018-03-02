@@ -1,5 +1,6 @@
 from . import GeneralBranch, Branch
 
+
 class Rhel7Branch(GeneralBranch):
 
     def __init__(self):

@@ -2,17 +2,19 @@
 import os
 import configparser
 
+from update_image import DirectoryNotFoundError
+
+
 class GlobalSettings(object):
     # Path to configuration file
     CONFIG_PATH = "~/.config/anaconda-updates/updates.cfg"
 
     #######################
     # Global configuration
-    projects_path = "" # Directory where anaconda blivet and pykickstart are
-#    RPM_DIR = "../../rpms"
-    anaconda_path = "" # Name of the directory with anaconda source codes
-    PXE_server=""     # Server with PXE which you are using to test anaconda
-    server_path=""     # Server path for saving updates image
+    projects_path = ""    # Directory where anaconda blivet and pykickstart are
+    anaconda_path = ""    # Name of the directory with anaconda source codes
+    PXE_server = ""       # Server with PXE which you are using to test anaconda
+    server_path = ""      # Server path for saving updates image
     show_version_script_path = ""
 
     #######################
@@ -34,7 +36,7 @@ class GlobalSettings(object):
     use_simpleline = False
 
     @classmethod
-    def readConfiguration(cls):
+    def read_configuration(cls):
         config = configparser.ConfigParser()
         with open(os.path.expanduser(cls.CONFIG_PATH)) as f_cfg:
             config.read_file(f_cfg)

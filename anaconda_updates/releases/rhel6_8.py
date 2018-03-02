@@ -1,6 +1,7 @@
 from . import GeneralBranch, Branch
 from anaconda_updates.settings import GlobalSettings
 
+
 class Rhel6_8Branch(GeneralBranch):
 
     def __init__(self):
@@ -10,6 +11,6 @@ class Rhel6_8Branch(GeneralBranch):
                          version="13.21.254",
                          img_name="rhel6_updates.img")
 
-        GlobalSettings.use_blivet=False
-        GlobalSettings.use_pykickstart=False
-        GlobalSettings.auto_fetch=False
+        GlobalSettings.use_blivet = False
+        GlobalSettings.use_pykickstart = False
+        GlobalSettings.auto_fetch = False

@@ -1,5 +1,6 @@
 from . import GeneralBranch, Branch
 
+
 class Fedora22Branch(GeneralBranch):
 
     def __init__(self):

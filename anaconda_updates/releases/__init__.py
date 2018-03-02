@@ -9,6 +9,7 @@ import os
 from enum import Enum
 from anaconda_updates.settings import GlobalSettings
 
+
 class Branch(Enum):
     Nothing  = 0,
 
@@ -56,7 +57,6 @@ class GeneralBranch(object):
             if not self.version:
                 print(self.version)
                 raise ValueError("Anaconda version is not set")
-
 
     def add_argument(self, parse_args):
         parse_args.add_branch_param(*self.cmd_args, const_val=self.type,

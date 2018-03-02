@@ -1,5 +1,6 @@
 from . import GeneralBranch, Branch
 
+
 class MasterBranch(GeneralBranch):
 
     def __init__(self):
