@@ -2,7 +2,6 @@
 import os
 import configparser
 
-from update_image import DirectoryNotFoundError
 
 
 class GlobalSettings(object):
@@ -47,6 +46,9 @@ class GlobalSettings(object):
 
             cls.PXE_server = global_settings["Server"]
             cls.server_path = global_settings["ServerPath"]
+
+            # prevent cyclic imports
+            from update_image import DirectoryNotFoundError
 
             if not os.path.isdir(cls.projects_path):
                 raise DirectoryNotFoundError("Can't find directory {}".format(cls.projects_path))
