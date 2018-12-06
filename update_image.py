@@ -46,8 +46,8 @@ class ParseArgs(ArgumentParser):
                           help=("copy pykickstart to updates image."))
         self.add_argument("--simpleline", dest="use_simpleline", action="store_true",
                           help=("copy simpleline to updates image."))
-        self.add_argument("--add-addon", dest="add_addon", nargs=1, action="store",
-                          metavar="path",
+        self.add_argument("--add-addon", dest="add_addon", nargs=1, action="append",
+                          default=[], metavar="path",
                           help=("add addon to the updates image structure. "
                                 "Can be combined with -p to only update addon."))
         self.add_argument("--add-rpm", dest="add_rpm", nargs='+', action="store",
@@ -67,9 +67,9 @@ class ParseArgs(ArgumentParser):
             GlobalSettings.push_only = True
         if self.nm.alternative_dir:
             GlobalSettings.anaconda_path = "anaconda-2"
-        if self.nm.add_addon:
-            expanded = os.path.expanduser(self.nm.add_addon[0])
-            GlobalSettings.AddonDir = os.path.normpath(expanded)
+        for addon in self.nm.add_addon:
+            expanded = os.path.expanduser(addon[0])
+            GlobalSettings.add_addon.append(os.path.normpath(expanded))
         if self.nm.no_fetch:
             GlobalSettings.auto_fetch = False
         if self.nm.add_rpm:
@@ -145,17 +145,24 @@ class Executor(object):
         except os.error as e:
             print("Updates directory exists already")
 
-        if GlobalSettings.AddonDir:
-            addon_img_path=os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/usr/share/anaconda/addons/")
+        addon_img_path = os.path.join(
+            GlobalSettings.projects_path,
+            GlobalSettings.anaconda_path,
+            "updates/usr/share/anaconda/addons/"
+        )
+
+        if GlobalSettings.add_addon:
             try:
                 os.makedirs(addon_img_path)
             except os.error as e:
                 print("Can't create addon directory!")
+
+        for addon in GlobalSettings.add_addon:
             try:
-                print("Copy addon", GlobalSettings.AddonDir)
+                print("Copy addon", addon)
                 shutil.rmtree(addon_img_path)
-                dst=os.path.join(addon_img_path, os.path.split(GlobalSettings.AddonDir)[1])
-                shutil.copytree(GlobalSettings.AddonDir, dst)
+                dst=os.path.join(addon_img_path, os.path.split(addon)[1])
+                shutil.copytree(addon, dst)
             except FileExistsError as e:
                 print("Can't copy addon")
 

@@ -22,7 +22,7 @@ class GlobalSettings(object):
     # target anaconda version
     # None means use branch specific
     target = None
-    AddonDir = ""
+    add_addon = []
     image_name = None
 
     add_RPM = []
