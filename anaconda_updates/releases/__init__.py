@@ -1,7 +1,7 @@
 __all__ = ["Branch", "GeneralBranch", "master",
            "f22", "f23", "f24", "f25", "f26", "f27", "f28", "f29",
            "rhel6", "rhel6_8",
-           "rhel7", "rhel7_1", "rhel7_2", "rhel7_3", "rhel7_4", "rhel7_5",
+           "rhel7", "rhel7_1", "rhel7_2", "rhel7_3", "rhel7_4", "rhel7_5", "rhel7_6",
            "rhel8"]
 
 import subprocess
@@ -33,6 +33,7 @@ class Branch(Enum):
     rhel7_3  = 23,
     rhel7_4  = 24,
     rhel7_5  = 25,
+    rhel7_6  = 26,
 
     rhel8    = 30,
 
@@ -70,4 +71,3 @@ class GeneralBranch(object):
     def get_version(self):
         path = os.path.expanduser(GlobalSettings.show_version_script_path)
         return subprocess.check_output([path, *self.show_version_params]).decode()[:-1]
-
