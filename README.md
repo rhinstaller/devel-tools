@@ -18,7 +18,7 @@ This repository contains main script `anaconda_tamer.sh`. The script needs an ad
 When the Anaconda tamer ssh to the installation environment it automatically attach running tmux session. The benefit of this is that Anaconda installer is running from there so we can even use PDB debugger easily and in case the connection will be dropped you won't lost any work.
 
 ``
-./anaconda_taimer.sh <address>
+./anaconda_tamer.sh <address>
 ``
 
 ## Useful info
