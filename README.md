@@ -9,7 +9,7 @@ Benefits:
 
 Drawbacks:
 
-* You *can't* control graphical installation
+* You **can't** control graphical installation
 
 
 ## How to use
@@ -25,4 +25,4 @@ When the Anaconda tamer ssh to the installation environment it automatically att
 If you are using tmux locally then you will end with nested tmux in your local tmux instance. In that case you can control the inner tmux by pressing prefix (Ctrl+b) twice, after that everything will be send to the inner instance. You don't need this if you have other than default prefix.
 
 # Warning!
-The ssh have strict host key checking disabled. This is not secure and can be used by the *man-in-the-middle attack*! This behavior is required to adapt to a typical Anaconda development when the installation environment generates an ssh key on boot. See `StrictHostKeyChecking` in `ssh_config(5)` for more info.
+The ssh have strict host key checking disabled. This is not secure and can be used by the **man-in-the-middle attack**! This behavior is required to adapt to a typical Anaconda development when the installation environment generates an ssh key on boot. See `StrictHostKeyChecking` in `ssh_config(5)` for more info.
