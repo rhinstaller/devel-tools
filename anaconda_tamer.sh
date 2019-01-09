@@ -12,4 +12,4 @@ else
 fi
 
 
-ssh -t -o StrictHostKeyChecking=no "root@$HOST" "tmux attach-session -d -t anaconda"
+ssh -t -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "root@$HOST" "tmux attach-session -d -t anaconda"
