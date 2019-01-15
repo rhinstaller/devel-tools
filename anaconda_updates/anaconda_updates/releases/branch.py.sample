@@ -1,0 +1,17 @@
+from . import GeneralBranch, Branch
+
+class ExampleBranch(GeneralBranch):
+
+    def __init__(self):
+        super().__init__(branch_type=Branch.Example,               # branch type from the Branch enum
+                         cmd_args=["-ex", "--example"],            # params for this branch on command line
+                         help="command line help",                 # command line help line for the params
+                                                                   # --------------
+                         version="",                               # hardcoded anaconda version on the branch
+                                                                   # OR
+                         version_script_params=["-arg1", "-arg2"], # you can use external script with these params,
+                                                                   # path to this script can be set in a conf file
+                                                                   # --------------
+                         img_name="master_updates.img",            # name of the image on the server
+                         mkupdates_args=[])                        # additional arguments for the makeupdates script
+
