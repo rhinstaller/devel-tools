@@ -3,7 +3,6 @@ import os
 import configparser
 
 
-
 class GlobalSettings(object):
     # Path to configuration file
     CONFIG_PATH = "~/.config/anaconda-updates/updates.cfg"

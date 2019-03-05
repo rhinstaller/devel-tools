@@ -50,6 +50,10 @@ do
          PACKAGES_URL="fedora29/Packages/a"
          shift
          ;;
+        -f30)
+         PACKAGES_URL="fedora30/Packages/a"
+         shift
+         ;;
         -p)
          VERSION_ONLY=true
          shift
