@@ -6,13 +6,16 @@ import time
 import shutil
 
 from tempfile import mkdtemp
+from contextlib import contextmanager
 from productmd.treeinfo import TreeInfo, Variant
+from rpmfluff import SimpleRpmBuild, SourceFile
 
 
 FEDORA_REPO_NAME = "Fedora"
 ARCH = "x86_64"
 
 TREE_INFO_FILE_NAME = "treeinfo"
+CUSTOM_REPO_NAME = "Custom"
 
 
 # Sources:
@@ -22,9 +25,11 @@ TREE_INFO_FILE_NAME = "treeinfo"
 # /usr/bin/isohybrid --uefi RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
 # /usr/bin/implantisomd5 --supported-iso RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
 
-def make_subprocess_call(command):
-    print("Running:\n'{}'".format(command))
+def _make_subprocess_call(command):
+    print("------------------------")
+    print("Running:\n'{}'".format(" ".join(command)))
     ret = subprocess.run(command)
+    print("------------------------")
 
     ret.check_returncode()
 
@@ -65,16 +70,51 @@ def create_treeinfo(path):
 def _create_custom_variant(tree_info):
     variant = Variant(tree_info)
 
-    variant.id = "Custom"
-    variant.uid = "Custom"
-    variant.name = "Custom"
+    variant.id = CUSTOM_REPO_NAME
+    variant.uid = CUSTOM_REPO_NAME
+    variant.name = CUSTOM_REPO_NAME
     variant.type = "variant"
 
     tree_info.variants.add(variant)
 
 
 def create_custom_repo(temp_dir):
-    pass
+    rpm_file = _create_fake_rpm(temp_dir)
+    repo_dir = os.path.join(temp_dir, CUSTOM_REPO_NAME)
+
+    os.mkdir(repo_dir)
+    shutil.copy2(rpm_file, repo_dir)
+
+    _create_repo(temp_dir)
+
+
+def _create_fake_rpm(temp_dir):
+    rpm = SimpleRpmBuild(name="test-rpm", version="200", release="9000")
+    rpm.add_installed_file(installPath="/usr/bin/TEST",
+                           sourceFile=SourceFile(sourceName="TEST",
+                                                 content="SO AWESOME APP!")
+                           )
+    with switch_workdir(temp_dir):
+        rpm.make()
+
+    rpm_rel_path = rpm.get_built_rpm(ARCH)
+    return os.path.join(temp_dir, rpm_rel_path)
+
+
+def _create_repo(repo_dir):
+    _make_subprocess_call(["createrepo_c", repo_dir])
+
+
+@contextmanager
+def switch_workdir(dir):
+    """This is a context manager to temporary switch the current directory.
+
+    This function should be used with `with` keyword.
+    """
+    old_cwd = os.getcwd()
+    os.chdir(dir)
+    yield
+    os.chdir(old_cwd)
 
 
 def create_temp_dir():
@@ -88,7 +128,8 @@ def remove_temp_dir(temp_dir):
 if __name__ == "__main__":
     temp_dir = create_temp_dir()
 
-    tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
-    create_treeinfo(tree_info_path)
+    # tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
+    # create_treeinfo(tree_info_path)
+    create_custom_repo(temp_dir)
 
     print("Everything created in", temp_dir)
