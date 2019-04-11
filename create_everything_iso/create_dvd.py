@@ -81,11 +81,15 @@ def _create_custom_variant(tree_info):
 def create_custom_repo(temp_dir):
     rpm_file = _create_fake_rpm(temp_dir)
     repo_dir = os.path.join(temp_dir, CUSTOM_REPO_NAME)
+    packages_dir = os.path.join(repo_dir, "Packages")
 
     os.mkdir(repo_dir)
-    shutil.copy2(rpm_file, repo_dir)
+    os.makedirs(packages_dir)
+    shutil.copy2(rpm_file, packages_dir)
 
-    _create_repo(temp_dir)
+    _create_repo(temp_dir, packages_dir)
+
+    return repo_dir
 
 
 def _create_fake_rpm(temp_dir):
@@ -101,8 +105,8 @@ def _create_fake_rpm(temp_dir):
     return os.path.join(temp_dir, rpm_rel_path)
 
 
-def _create_repo(repo_dir):
-    _make_subprocess_call(["createrepo_c", repo_dir])
+def _create_repo(repo_dir, packages_dir):
+    _make_subprocess_call(["createrepo_c", packages_dir, "--basedir", repo_dir])
 
 
 @contextmanager
