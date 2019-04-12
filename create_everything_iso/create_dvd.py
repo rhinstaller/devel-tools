@@ -87,7 +87,7 @@ def create_custom_repo(temp_dir):
     os.makedirs(packages_dir)
     shutil.copy2(rpm_file, packages_dir)
 
-    _create_repo(temp_dir, packages_dir)
+    _create_repo(repo_dir)
 
     return repo_dir
 
@@ -105,8 +105,8 @@ def _create_fake_rpm(temp_dir):
     return os.path.join(temp_dir, rpm_rel_path)
 
 
-def _create_repo(repo_dir, packages_dir):
-    _make_subprocess_call(["createrepo_c", packages_dir, "--basedir", repo_dir])
+def _create_repo(repo_dir):
+    _make_subprocess_call(["createrepo_c", repo_dir])
 
 
 @contextmanager
