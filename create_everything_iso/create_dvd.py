@@ -6,7 +6,7 @@ import time
 import shutil
 
 from argparse import ArgumentParser
-from tempfile import mkdtemp
+from tempfile import mkdtemp, TemporaryDirectory
 from contextlib import contextmanager
 from productmd.treeinfo import TreeInfo, Variant
 from rpmfluff import SimpleRpmBuild, SourceFile
@@ -26,13 +26,28 @@ CUSTOM_REPO_NAME = "Custom"
 # /usr/bin/isohybrid --uefi RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
 # /usr/bin/implantisomd5 --supported-iso RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
 
-def _make_subprocess_call(command):
+def _make_subprocess_call(command, env=None):
     print("------------------------")
     print("Running:\n'{}'".format(" ".join(command)))
-    ret = subprocess.run(command)
+    ret = subprocess.run(command, env=env)
     print("------------------------")
 
     ret.check_returncode()
+
+
+@contextmanager
+def mount_iso(image):
+    with TemporaryDirectory(prefix='create-dvd-iso-mount-') as mount_dir:
+        # use guestmount to mount the image, which doesn't require root privileges
+        # LIBGUESTFS_BACKEND=direct: running qemu directly without libvirt
+        env = {'LIBGUESTFS_BACKEND': 'direct'}
+        cmd = ["guestmount", "-a", image, "-m", "/dev/sda", "--ro", mount_dir]
+        _make_subprocess_call(cmd, env=env)
+
+        try:
+            yield mount_dir
+        finally:
+            _make_subprocess_call(['fusermount', '-u', mount_dir])
 
 
 def create_custom_dvd(source_iso, graft_dir, output_iso):
@@ -43,6 +58,16 @@ def create_custom_dvd(source_iso, graft_dir, output_iso):
     cmd.append(graft_dir)
 
     _make_subprocess_call(cmd)
+
+
+def obtain_existing_treeinfo_content(iso):
+    with mount_iso(iso) as mount_dir:
+        tree_info_path = os.path.join(mount_dir, ".treeinfo")
+        if not os.path.exists(tree_info_path):
+            raise RuntimeError("Can't find .treeinfo file on the source DVD ISO")
+
+        with open(tree_info_path, "rt") as fd:
+            return fd.read()
 
 
 def create_treeinfo(path):
