@@ -5,6 +5,7 @@ import os
 import time
 import shutil
 
+from argparse import ArgumentParser
 from tempfile import mkdtemp
 from contextlib import contextmanager
 from productmd.treeinfo import TreeInfo, Variant
@@ -129,11 +130,24 @@ def remove_temp_dir(temp_dir):
     shutil.rmtree(temp_dir)
 
 
+def parse_args():
+    parser = ArgumentParser(description="Tool to create testing DVD with multiple repositories.")
+
+    parser.add_argument("source_iso", metavar="SOURCE_ISO",
+                        help="""existing source ISO file which already contains repository
+                        (e.g. Fedora-Server-DVD.iso)""")
+    parser.add_argument("output_iso", metavar="OUTPUT_ISO",
+                        help="""path to the output ISO file""")
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    opt = parse_args()
     temp_dir = create_temp_dir()
 
-    # tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
-    # create_treeinfo(tree_info_path)
+    tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
+    create_treeinfo(tree_info_path)
     create_custom_repo(temp_dir)
 
     print("Everything created in", temp_dir)
