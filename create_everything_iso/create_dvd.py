@@ -35,6 +35,16 @@ def _make_subprocess_call(command):
     ret.check_returncode()
 
 
+def create_custom_dvd(source_iso, graft_dir, output_iso):
+    cmd = ["pungi-patch-iso"]
+
+    cmd.append(output_iso)
+    cmd.append(source_iso)
+    cmd.append(graft_dir)
+
+    _make_subprocess_call(cmd)
+
+
 def create_treeinfo(path):
     ti = TreeInfo()
 
@@ -149,5 +159,6 @@ if __name__ == "__main__":
     tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
     create_treeinfo(tree_info_path)
     create_custom_repo(temp_dir)
+    create_custom_dvd(opt.source_iso, temp_dir, opt.output_iso)
 
     print("Everything created in", temp_dir)
