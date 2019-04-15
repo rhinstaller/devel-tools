@@ -42,7 +42,7 @@ def create_treeinfo(path):
     ti.release.version = "31"
 
     ti.tree.arch = ARCH
-    ti.tree.build_timestamp = time.time()
+    ti.tree.build_timestamp = int(time.time())
     ti.tree.platforms.add(ARCH)
 
     images = {"efiboot.img": "images/efiboot.img",
