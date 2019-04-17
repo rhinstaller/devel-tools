@@ -16,6 +16,7 @@ ARCH = "x86_64"
 
 TREE_INFO_FILE_NAME = ".treeinfo"
 CUSTOM_REPO_NAME = "Custom"
+PACKAGES_DIR = "Packages"
 
 
 # Sources:
@@ -78,6 +79,8 @@ def append_custom_repo_to_treeinfo(treeinfo_content, path):
     variant.id = CUSTOM_REPO_NAME
     variant.uid = CUSTOM_REPO_NAME
     variant.name = CUSTOM_REPO_NAME
+    variant.paths.repository = os.path.join(".", CUSTOM_REPO_NAME)
+    variant.paths.packages = os.path.join(".", CUSTOM_REPO_NAME, PACKAGES_DIR)
     variant.type = "variant"
 
     ti.variants.add(variant)
@@ -88,7 +91,7 @@ def append_custom_repo_to_treeinfo(treeinfo_content, path):
 def create_custom_repo(temp_dir):
     rpm_file = _create_fake_rpm(temp_dir)
     repo_dir = os.path.join(temp_dir, CUSTOM_REPO_NAME)
-    packages_dir = os.path.join(repo_dir, "Packages")
+    packages_dir = os.path.join(repo_dir, PACKAGES_DIR)
 
     os.mkdir(repo_dir)
     os.makedirs(packages_dir)
