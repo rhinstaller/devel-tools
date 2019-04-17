@@ -157,3 +157,6 @@ if __name__ == "__main__":
     append_custom_repo_to_treeinfo(orig_tree_info_content, tree_info_path)
     create_custom_repo(temp_dir)
     create_custom_dvd(opt.source_iso, temp_dir, opt.output_iso)
+
+    # clean-up
+    remove_temp_dir(temp_dir)
