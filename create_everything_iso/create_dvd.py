@@ -2,7 +2,6 @@
 
 import subprocess
 import os
-import time
 import shutil
 
 from argparse import ArgumentParser
@@ -15,7 +14,7 @@ from rpmfluff import SimpleRpmBuild, SourceFile
 FEDORA_REPO_NAME = "Fedora"
 ARCH = "x86_64"
 
-TREE_INFO_FILE_NAME = "treeinfo"
+TREE_INFO_FILE_NAME = ".treeinfo"
 CUSTOM_REPO_NAME = "Custom"
 
 
@@ -70,48 +69,20 @@ def obtain_existing_treeinfo_content(iso):
             return fd.read()
 
 
-def create_treeinfo(path):
+def append_custom_repo_to_treeinfo(treeinfo_content, path):
     ti = TreeInfo()
-
-    ti.release.name = "Fedora"
-    ti.release.short = "Fedora"
-    ti.release.version = "31"
-
-    ti.tree.arch = ARCH
-    ti.tree.build_timestamp = int(time.time())
-    ti.tree.platforms.add(ARCH)
-
-    images = {"efiboot.img": "images/efiboot.img",
-              "initrd": "images/pxeboot/initrd.img",
-              "kernel": "images/pxeboot/vmlinuz"
-              }
-    ti.images.images[ARCH] = images
+    ti.loads(treeinfo_content)
 
     variant = Variant(ti)
-    variant.id = "Server"
-    variant.uid = "Server"
-    variant.name = "Server"
-    variant.type = "variant"
-
-    variant.paths.repository = FEDORA_REPO_NAME
-    variant.paths.packages = "{}/Packages".format(FEDORA_REPO_NAME)
-
-    ti.variants.add(variant)
-
-    _create_custom_variant(ti)
-
-    ti.dump(path)
-
-
-def _create_custom_variant(tree_info):
-    variant = Variant(tree_info)
 
     variant.id = CUSTOM_REPO_NAME
     variant.uid = CUSTOM_REPO_NAME
     variant.name = CUSTOM_REPO_NAME
     variant.type = "variant"
 
-    tree_info.variants.add(variant)
+    ti.variants.add(variant)
+
+    ti.dump(path)
 
 
 def create_custom_repo(temp_dir):
@@ -182,8 +153,7 @@ if __name__ == "__main__":
     temp_dir = create_temp_dir()
 
     tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
-    create_treeinfo(tree_info_path)
+    orig_tree_info_content = obtain_existing_treeinfo_content(opt.source_iso)
+    append_custom_repo_to_treeinfo(orig_tree_info_content, tree_info_path)
     create_custom_repo(temp_dir)
     create_custom_dvd(opt.source_iso, temp_dir, opt.output_iso)
-
-    print("Everything created in", temp_dir)
