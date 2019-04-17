@@ -18,19 +18,19 @@ TREE_INFO_FILE_NAME = ".treeinfo"
 CUSTOM_REPO_NAME = "Custom"
 PACKAGES_DIR = "Packages"
 
+VERBOSE = False
 
-# Sources:
-#
-# /usr/bin/genisoimage -untranslated-filenames -volid RHEL-8-0-0-BaseOS-x86_64 -J -joliet-long -rational-rock -translation-table -input-charset utf-8 -x ./lost+found -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img -no-emul-boot -o RHEL-8.0.0-20190404.2-x86_64-dvd1.iso -graft-points -path-list /mnt/redhat/rhel-8/devel/candidate-trees/RHEL-8/RHEL-8.0.0-20190404.2/work/x86_64/iso/RHEL-8.0.0-20190404.2-x86_64-dvd1.iso-graft-points
-#
-# /usr/bin/isohybrid --uefi RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
-# /usr/bin/implantisomd5 --supported-iso RHEL-8.0.0-20190404.2-x86_64-dvd1.iso
 
 def _make_subprocess_call(command, env=None):
-    print("------------------------")
-    print("Running:\n'{}'".format(" ".join(command)))
-    ret = subprocess.run(command, env=env)
-    print("------------------------")
+    if VERBOSE:
+        print("------------------------")
+        print("Running:\n'{}'".format(" ".join(command)))
+
+        ret = subprocess.run(command, env=env)
+
+        print("------------------------")
+    else:
+        ret = subprocess.run(command, env=env, capture_output=True)
 
     ret.check_returncode()
 
@@ -147,12 +147,17 @@ def parse_args():
                         (e.g. Fedora-Server-DVD.iso)""")
     parser.add_argument("output_iso", metavar="OUTPUT_ISO",
                         help="""path to the output ISO file""")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
+                        help="""enable verbose output""")
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     opt = parse_args()
+    if opt.verbose:
+        VERBOSE = True
+
     temp_dir = create_temp_dir()
 
     tree_info_path = os.path.join(temp_dir, TREE_INFO_FILE_NAME)
