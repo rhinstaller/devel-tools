@@ -44,9 +44,9 @@ class GeneralBranch(object):
                  cmd_args, help,
                  version="", version_script_params=[], img_name="master_updates.img",
                  mkupdates_args=[],
-                 blivet_args=["-i", "blivet"],
-                 pykickstart_args=["-i", "pykickstart"],
-                 simpleline_args=["-i", "simpleline"]):
+                 blivet_args=[],
+                 pykickstart_args=[],
+                 simpleline_args=[]):
 
         self.type = branch_type
         self.cmd_args = cmd_args
