@@ -52,7 +52,7 @@ class GeneralBranch(object):
         self.type = branch_type
         self.cmd_args = cmd_args
         self.help = help
-        self.version = version
+        self._version = version
         self.img_name = img_name
         self.input_args = mkupdates_args
         self.blivet_args = blivet_args
@@ -60,11 +60,16 @@ class GeneralBranch(object):
         self.simpleline_args = simpleline_args
         self.show_version_params = version_script_params
 
-        if not self.version:
-            self.version = self.get_version()
-            if not self.version:
-                print(self.version)
-                raise ValueError("Anaconda version is not set")
+    @property
+    def version(self):
+        if self._version:
+            return self._version
+        else:
+            ver = self.get_version()
+            if not ver:
+                raise ValueError("Anaconda version is not known")
+
+            return ver
 
     def add_argument(self, parse_args):
         parse_args.add_branch_param(*self.cmd_args, const_val=self.type,
