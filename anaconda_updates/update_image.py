@@ -32,8 +32,6 @@ class ParseArgs(ArgumentParser):
                           help="keep content of folder after image creation")
         self.add_argument("-c", "--compile", dest="compile", action="store_true",
                           help="compile anaconda before push")
-        self.add_argument("-f", dest="no_fetch", action="store_true",
-                          help="turn off autofetch dependencies for x86_64")
         self.add_argument("-t", "--target", dest="target_version", nargs=1, action="store",
                           metavar="version",
                           help=("set target version from command line. Use in git format"
@@ -70,8 +68,6 @@ class ParseArgs(ArgumentParser):
         for addon in self.nm.add_addon:
             expanded = os.path.expanduser(addon[0])
             GlobalSettings.add_addon.append(os.path.normpath(expanded))
-        if self.nm.no_fetch:
-            GlobalSettings.auto_fetch = False
         if self.nm.add_rpm:
             GlobalSettings.add_RPM.extend(self.nm.add_rpm)
         if self.nm.target_version:
@@ -116,8 +112,6 @@ class CreateCommand(object):
                 input_args.extend(self._branch_obj.pykickstart_args)
             if GlobalSettings.use_simpleline:
                 input_args.extend(self._branch_obj.simpleline_args)
-            if GlobalSettings.auto_fetch:
-                input_args.extend(["-f", "x86_64"])
 
             for rpm in GlobalSettings.add_RPM:
                 input_args.extend(["-a", rpm])

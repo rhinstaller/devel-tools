@@ -26,7 +26,6 @@ class GlobalSettings(object):
 
     add_RPM = []
 
-    auto_fetch = True
     push_only = False
 
     use_blivet = False
