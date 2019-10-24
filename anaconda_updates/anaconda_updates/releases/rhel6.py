@@ -13,4 +13,3 @@ class Rhel6Branch(GeneralBranch):
 
         GlobalSettings.use_blivet = False
         GlobalSettings.use_pykickstart = False
-        GlobalSettings.auto_fetch = False
