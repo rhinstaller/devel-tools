@@ -44,6 +44,8 @@ class ParseArgs(ArgumentParser):
                           help=("copy pykickstart to updates image."))
         self.add_argument("--simpleline", dest="use_simpleline", action="store_true",
                           help=("copy simpleline to updates image."))
+        self.add_argument("--dasbus", dest="use_dasbus", action="store_true",
+                          help=("copy dasbus to updates image."))
         self.add_argument("--add-addon", dest="add_addon", nargs=1, action="append",
                           default=[], metavar="path",
                           help=("add addon to the updates image structure. "
@@ -78,6 +80,8 @@ class ParseArgs(ArgumentParser):
             GlobalSettings.use_pykickstart = True
         if self.nm.use_simpleline:
             GlobalSettings.use_simpleline = True
+        if self.nm.use_dasbus:
+            GlobalSettings.use_dasbus = True
         if self.nm.image_name:
             GlobalSettings.image_name = self.nm.image_name
 
@@ -112,6 +116,8 @@ class CreateCommand(object):
                 input_args.extend(self._branch_obj.pykickstart_args)
             if GlobalSettings.use_simpleline:
                 input_args.extend(self._branch_obj.simpleline_args)
+            if GlobalSettings.use_dasbus:
+                input_args.extend(self._branch_obj.dasbus_args)
 
             for rpm in GlobalSettings.add_RPM:
                 input_args.extend(["-a", rpm])
@@ -182,6 +188,15 @@ class Executor(object):
             print("Copy simpleline...")
             source = os.path.join(GlobalSettings.projects_path, "simpleline/simpleline")
             dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/simpleline")
+            try:
+                shutil.copytree(source, dest)
+            except FileExistsError as e:
+                print("Skipping dasbus copy:", str(e))
+
+        if GlobalSettings.use_dasbus:
+            print("Copy dasbus...")
+            source = os.path.join(GlobalSettings.projects_path, "dasbus/dasbus")
+            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/dasbus")
             try:
                 shutil.copytree(source, dest)
             except FileExistsError as e:

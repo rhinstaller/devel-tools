@@ -31,6 +31,7 @@ class GlobalSettings(object):
     use_blivet = False
     use_pykickstart = False
     use_simpleline = False
+    use_dasbus = False
 
     @classmethod
     def read_configuration(cls):

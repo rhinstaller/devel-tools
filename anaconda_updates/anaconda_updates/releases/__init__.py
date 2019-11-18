@@ -47,7 +47,8 @@ class GeneralBranch(object):
                  mkupdates_args=[],
                  blivet_args=[],
                  pykickstart_args=[],
-                 simpleline_args=[]):
+                 simpleline_args=[],
+                 dasbus_args=[]):
 
         self.type = branch_type
         self.cmd_args = cmd_args
@@ -58,6 +59,7 @@ class GeneralBranch(object):
         self.blivet_args = blivet_args
         self.pykickstart_args = pykickstart_args
         self.simpleline_args = simpleline_args
+        self.dasbus_args = dasbus_args
         self.show_version_params = version_script_params
 
     @property
