@@ -54,6 +54,10 @@ class ParseArgs(ArgumentParser):
                           metavar="paths",
                           help=("add RPM packages to updates image. "
                                 "You can use blob in later make_updates"))
+        self.add_argument("--add-image", dest="add_image", nargs=1, action="append",
+                          default=[], metavar="images",
+                          help=("add contents of another image to the updates image. "
+                                "Can be used to upload addons etc."))
 
     def add_branch_param(self, *args, const_val, help):
         self._branch_group.add_argument(*args, dest="branch",
@@ -70,6 +74,9 @@ class ParseArgs(ArgumentParser):
         for addon in self.nm.add_addon:
             expanded = os.path.expanduser(addon[0])
             GlobalSettings.add_addon.append(os.path.normpath(expanded))
+        for image in self.nm.add_image:
+            expanded = os.path.expanduser(image[0])
+            GlobalSettings.add_image.append(os.path.normpath(expanded))
         if self.nm.add_rpm:
             GlobalSettings.add_RPM.extend(self.nm.add_rpm)
         if self.nm.target_version:
@@ -144,6 +151,25 @@ class Executor(object):
             os.makedirs(os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates"))
         except os.error as e:
             print("Updates directory exists already")
+
+        image_img_path = os.path.join(
+            GlobalSettings.projects_path,
+            GlobalSettings.anaconda_path,
+            "updates"
+        )
+
+        if GlobalSettings.add_image:
+            try:
+                os.makedirs(image_img_path)
+            except os.error as e:
+                print("Can't create image directory!")
+
+        for image in GlobalSettings.add_image:
+            print("Add image", image)
+            cmd = "gunzip < {} | cpio --quiet -iduD {}".format(image, image_img_path)
+            proc = subprocess.run(cmd, shell=True)
+            if proc.returncode != 0:
+                print("Can't unpack the image")
 
         addon_img_path = os.path.join(
             GlobalSettings.projects_path,

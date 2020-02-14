@@ -22,6 +22,7 @@ class GlobalSettings(object):
     # None means use branch specific
     target = None
     add_addon = []
+    add_image = []
     image_name = None
 
     add_RPM = []
