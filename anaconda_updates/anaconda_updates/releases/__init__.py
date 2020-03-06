@@ -1,5 +1,5 @@
 __all__ = ["Branch", "GeneralBranch", "master",
-           "f22", "f23", "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31",
+           "f22", "f23", "f24", "f25", "f26", "f27", "f28", "f29", "f30", "f31", "f32",
            "rhel6", "rhel6_8",
            "rhel7", "rhel7_1", "rhel7_2", "rhel7_3", "rhel7_4", "rhel7_5", "rhel7_6",
            "rhel8"]
@@ -25,6 +25,7 @@ class Branch(Enum):
     fedora29 = 9,
     fedora30 = 10,
     fedora31 = 11,
+    fedora32 = 12,
 
     rhel6    = 50,
     rhel6_8  = 51,
