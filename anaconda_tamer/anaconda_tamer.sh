@@ -16,4 +16,4 @@ fi
 # StrictHostKeyChecking -- do not check that ssh public key changed (public key is not persistent between reboots)
 # UserKnownHostsFile -- do not store public key of the VM (public key is not persistent between reboots)
 # ServerAliveInterval -- make the timeout time smaller (in case you will reboot machine which you are connected to)
-ssh -t -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=5 "root@$HOST" "tmux attach-session -d -t anaconda"
+ssh -t -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=5 "install@$HOST"
