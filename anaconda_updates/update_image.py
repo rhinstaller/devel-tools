@@ -111,7 +111,6 @@ class CreateCommand(object):
             cmd.append("-t")
             cmd.append("HEAD")
         else:
-            version = self._branch_obj.version
             input_args = self._branch_obj.input_args
 
             if compile:
@@ -132,6 +131,7 @@ class CreateCommand(object):
             if GlobalSettings.target:
                 commit_version = GlobalSettings.target
             else:
+                version = self._branch_obj.version
                 commit_version = "anaconda-" + version + "-1"
 
             cmd.append("-t")
