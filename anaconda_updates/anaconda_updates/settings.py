@@ -13,6 +13,7 @@ class GlobalSettings(object):
     anaconda_path = ""    # Name of the directory with anaconda source codes
     server = None         # Server with PXE which you are using to test anaconda; could be None
     server_path = "~"     # Server path for saving updates image; default '~'
+    local_path = "/tmp"   # Local path to the image; default "/tmp"
     show_version_script_path = ""
 
     #######################
@@ -46,6 +47,7 @@ class GlobalSettings(object):
 
             cls.server = global_settings.get("Server", None)
             cls.server_path = global_settings.get("ServerPath", "~")
+            cls.local_path = os.path.expanduser(global_settings.get("LocalPath", "/tmp"))
 
             # prevent cyclic imports
             from update_image import DirectoryNotFoundError

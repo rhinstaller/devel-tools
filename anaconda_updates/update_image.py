@@ -244,7 +244,7 @@ class Executor(object):
     def upload_image(self):
         img_name = GlobalSettings.image_name if GlobalSettings.image_name is not None else self._branch_obj.img_name
         src = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates.img")
-        dst_local = os.path.join("../images/", img_name)
+        dst_local = os.path.join(GlobalSettings.local_path, img_name)
 
         if GlobalSettings.server:
             dst_srv = os.path.join(GlobalSettings.server + ":" + GlobalSettings.server_path, img_name)
