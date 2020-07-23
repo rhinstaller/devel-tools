@@ -11,8 +11,8 @@ class GlobalSettings(object):
     # Global configuration
     projects_path = ""    # Directory where anaconda blivet and pykickstart are
     anaconda_path = ""    # Name of the directory with anaconda source codes
-    PXE_server = ""       # Server with PXE which you are using to test anaconda
-    server_path = ""      # Server path for saving updates image
+    server = None         # Server with PXE which you are using to test anaconda; could be None
+    server_path = "~"     # Server path for saving updates image; default '~'
     show_version_script_path = ""
 
     #######################
@@ -44,8 +44,8 @@ class GlobalSettings(object):
             cls.show_version_script_path = global_settings["ShowVersionScriptPath"]
             cls.anaconda_path = global_settings.get("anaconda_pathName", "anaconda")
 
-            cls.PXE_server = global_settings["Server"]
-            cls.server_path = global_settings["ServerPath"]
+            cls.server = global_settings.get("Server", None)
+            cls.server_path = global_settings.get("ServerPath", "~")
 
             # prevent cyclic imports
             from update_image import DirectoryNotFoundError

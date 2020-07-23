@@ -245,11 +245,13 @@ class Executor(object):
         img_name = GlobalSettings.image_name if GlobalSettings.image_name is not None else self._branch_obj.img_name
         src = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates.img")
         dst_local = os.path.join("../images/", img_name)
-        dst_srv = os.path.join(GlobalSettings.PXE_server + ":" + GlobalSettings.server_path, img_name)
 
-        print("Uploading image to server")
-        out = subprocess.check_output(["scp", src, dst_srv], stderr=subprocess.STDOUT).decode()
-        print(out)
+        if GlobalSettings.server:
+            dst_srv = os.path.join(GlobalSettings.server + ":" + GlobalSettings.server_path, img_name)
+            print("Uploading image to server")
+            out = subprocess.check_output(["scp", src, dst_srv], stderr=subprocess.STDOUT).decode()
+            print(out)
+
         shutil.move(src, dst_local)
         print("Creating backup", dst_local)
 
