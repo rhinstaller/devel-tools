@@ -134,19 +134,30 @@ class QEMU:
                                f'inst.updates=http://10.0.2.22 {append}']
         else:
             self.qemu_args += ['-append', 'inst.updates=http://10.0.2.22']
+        self.ssh = 'inst.sshd' in append
 
-    def run(self, http_port, loadvm=None):
+    def run(self, http_port, loadvm=None, second_time=False):
         self.monitor_port = find_free_port()
+        if second_time and self.ssh:
+            self.ssh_port = find_free_port()
+            ssh_hostfwd = f'hostfwd=tcp:127.0.0.1:{self.ssh_port}-:22,'
+        else:
+            ssh_hostfwd = ''
         cmd = ['qemu-system-x86_64'] + self.qemu_args + [
             '-monitor',
             f'tcp:127.0.0.1:{self.monitor_port},server,nowait,nodelay',
             '-device', 'virtio-net,netdev=net0', '-netdev',
-            'user,id=net0,'
+            f'user,id=net0,{ssh_hostfwd}'
             f'guestfwd=tcp:10.0.2.22:80-cmd:nc 127.0.0.1 {http_port}'
         ]
         if loadvm:
             cmd += ['-loadvm', loadvm]
         print(f'executing {cmd}')
+        if self.ssh and second_time:
+            print('to ssh into the VM, execute')
+            print('  ssh -o StrictHostKeyChecking=no '
+                  '-o UserKnownHostsFile=/dev/null '
+                  f'root@localhost -p {self.ssh_port}')
         subprocess.run(cmd, check=True)
 
     def monitor_execute(self, cmd, wait=True):
@@ -224,7 +235,7 @@ def updates(updates_img):
         qemu = pickle.load(f)
     http_port = start_a_single_file_server(updates_img)
     time.sleep(.5)
-    qemu.run(http_port, loadvm='preupdates')
+    qemu.run(http_port, loadvm='preupdates', second_time=True)
 
 
 def cleanup():
