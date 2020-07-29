@@ -54,6 +54,7 @@ QEMU_SENSIBLE_ARGUMENTS = [
     '-object', 'rng-random,id=rng0,filename=/dev/urandom',
     '-device', 'virtio-rng-pci,rng=rng0',
     '-drive', 'file=reanaconda/disk.img,cache=unsafe,if=virtio',
+    '-monitor', 'stdio',
 ]
 
 

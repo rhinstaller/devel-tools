@@ -18,3 +18,9 @@ $ ./reanaconda.py updates path/to/updates.img
 $ # or: echo updates.img | entr -r ./scripts/reanaconda updates updates.img
 $ ./reanaconda.py cleanup
 ```
+
+# Notes
+
+To switch TTY the QEMU console will automatically connect to the
+terminal with reanaconda. You can switch console by writing
+'sendkey ctrl-alt-f1'.
