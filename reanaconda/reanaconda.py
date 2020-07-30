@@ -157,7 +157,7 @@ class QEMU:
             print('to ssh into the VM, execute')
             print('  ssh -o StrictHostKeyChecking=no '
                   '-o UserKnownHostsFile=/dev/null '
-                  f'root@localhost -p {self.ssh_port}')
+                  f'anaconda@localhost -p {self.ssh_port}')
         subprocess.run(cmd, check=True)
 
     def monitor_execute(self, cmd, wait=True):
