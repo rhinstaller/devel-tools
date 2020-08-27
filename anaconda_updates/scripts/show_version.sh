@@ -62,6 +62,10 @@ do
          PACKAGES_URL="fedora32/Packages/a"
          shift
          ;;
+        -f33)
+         PACKAGES_URL="fedora33/Packages/a"
+         shift
+         ;;
         -p)
          VERSION_ONLY=true
          shift
