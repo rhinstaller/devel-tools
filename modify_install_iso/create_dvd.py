@@ -4,15 +4,16 @@
 # an unified dvd for testing purposes.
 #
 
-import subprocess
 import os
 import shutil
 
 from argparse import ArgumentParser
-from tempfile import mkdtemp, TemporaryDirectory
+from tempfile import mkdtemp
 from contextlib import contextmanager
 from productmd.treeinfo import TreeInfo, Variant
 from rpmfluff import SimpleRpmBuild, SourceFile
+
+from lib import mount_iso, subprocess_call
 
 
 FEDORA_REPO_NAME = "Fedora"
@@ -25,35 +26,6 @@ PACKAGES_DIR = "Packages"
 VERBOSE = False
 
 
-def _make_subprocess_call(command, env=None):
-    if VERBOSE:
-        print("------------------------")
-        print("Running:\n'{}'".format(" ".join(command)))
-
-        ret = subprocess.run(command, env=env)
-
-        print("------------------------")
-    else:
-        ret = subprocess.run(command, env=env, capture_output=True)
-
-    ret.check_returncode()
-
-
-@contextmanager
-def mount_iso(image):
-    with TemporaryDirectory(prefix='create-dvd-iso-mount-') as mount_dir:
-        # use guestmount to mount the image, which doesn't require root privileges
-        # LIBGUESTFS_BACKEND=direct: running qemu directly without libvirt
-        env = {'LIBGUESTFS_BACKEND': 'direct'}
-        cmd = ["guestmount", "-a", image, "-m", "/dev/sda", "--ro", mount_dir]
-        _make_subprocess_call(cmd, env=env)
-
-        try:
-            yield mount_dir
-        finally:
-            _make_subprocess_call(['fusermount', '-u', mount_dir])
-
-
 def create_custom_dvd(source_iso, graft_dir, output_iso):
     cmd = ["pungi-patch-iso"]
 
@@ -61,7 +33,7 @@ def create_custom_dvd(source_iso, graft_dir, output_iso):
     cmd.append(source_iso)
     cmd.append(graft_dir)
 
-    _make_subprocess_call(cmd)
+    subprocess_call(cmd, VERBOSE)
 
 
 def obtain_existing_treeinfo_content(iso):
@@ -120,7 +92,7 @@ def _create_fake_rpm(temp_dir):
 
 
 def _create_repo(repo_dir):
-    _make_subprocess_call(["createrepo_c", repo_dir])
+    subprocess_call(["createrepo_c", repo_dir], VERBOSE)
 
 
 @contextmanager
