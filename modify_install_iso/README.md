@@ -1,4 +1,12 @@
-# Create unified DVD
+# Tooling to help with installation image modifications
+
+These scripts should help with debugging of Anaconda use-cases where we need an ISO but the ISO is not available in a shape which would help us. Please feel free to abuse the scripts as much as you need but don't expect they will do everything. However, as always patches are **welcome**.
+
+Below you will find scripts which should help you with your tasks:
+
+* [`create_dvd`](#create_dvd)
+
+# create_dvd
 
 ## Reasoning
 
