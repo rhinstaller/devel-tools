@@ -16,17 +16,29 @@ def subprocess_call(command, env=None, verbose=False):
     :param {string: string} env: add environment variable for the call
     :param bool verbose: should the call print verbose information
     """
-    if verbose:
-        print("------------------------")
-        print("Running:\n'{}'".format(" ".join(command)))
+    try:
+        if verbose:
+            print("------------------------")
+            print("Running:\n'{}'".format(" ".join(command)))
 
-        ret = subprocess.run(command, env=env)
+            subprocess.run(command, env=env, check=True)
 
-        print("------------------------")
-    else:
-        ret = subprocess.run(command, env=env, capture_output=True)
+            print("------------------------")
+        else:
+            subprocess.run(command, env=env, capture_output=True, check=True)
+    except subprocess.CalledProcessError as ex:
+        print(f"System call failed with return code {ex.returncode}")
+        if ex.output:
+            print(f"Captured output:\n{ex.output.decode('utf-8')}")
+            print("----------------------------")
+        if ex.stderr:
+            print(f"Captured stderr:\n{ex.stderr.decode('utf-8')}")
+            print("----------------------------")
+        if ex.stdout:
+            print(f"Captured stdout:\n{ex.stdout.decode('utf-8')}")
+            print("----------------------------")
 
-    ret.check_returncode()
+        raise ex
 
 
 @contextmanager
