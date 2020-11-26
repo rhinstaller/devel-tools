@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from productmd.treeinfo import TreeInfo, Variant
 from rpmfluff import SimpleRpmBuild, SourceFile
 
-from lib import mount_iso, subprocess_call
+from lib import mount_iso, subprocess_call, create_custom_dvd
 
 
 FEDORA_REPO_NAME = "Fedora"
@@ -24,16 +24,6 @@ CUSTOM_REPO_NAME = "Custom"
 PACKAGES_DIR = "Packages"
 
 VERBOSE = False
-
-
-def create_custom_dvd(source_iso, graft_dir, output_iso):
-    cmd = ["pungi-patch-iso"]
-
-    cmd.append(output_iso)
-    cmd.append(source_iso)
-    cmd.append(graft_dir)
-
-    subprocess_call(cmd, VERBOSE)
 
 
 def obtain_existing_treeinfo_content(iso):
@@ -140,7 +130,7 @@ if __name__ == "__main__":
     orig_tree_info_content = obtain_existing_treeinfo_content(opt.source_iso)
     append_custom_repo_to_treeinfo(orig_tree_info_content, tree_info_path)
     create_custom_repo(temp_dir)
-    create_custom_dvd(opt.source_iso, temp_dir, opt.output_iso)
+    create_custom_dvd(opt.source_iso, temp_dir, opt.output_iso, verbose=VERBOSE)
 
     # clean-up
     remove_temp_dir(temp_dir)

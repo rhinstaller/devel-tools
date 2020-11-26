@@ -50,3 +50,16 @@ def mount_iso(image):
             yield mount_dir
         finally:
             subprocess_call(['fusermount', '-u', mount_dir])
+
+
+def create_custom_dvd(source_iso, output_iso, graft_dir, verbose=False):
+    """Call pungi-patch-iso tool to modify source iso and add graft dir content.
+
+    :param str source_iso: source for modification
+    :param str output_iso: output modified iso
+    :param str graft_dir: path to the directory with content we want to modify
+    :param bool verbose: should the call to pungi be verbose to people
+    """
+    cmd = ["pungi-patch-iso", output_iso, source_iso, graft_dir]
+
+    subprocess_call(cmd, verbose=verbose)
