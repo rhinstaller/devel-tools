@@ -3,6 +3,8 @@
 # Modify iso bootloader configuration by this tool. It's pretty valuable when you need to boot the
 # iso with some specific arguments (inst.ks, inst.text, overlay...).
 #
+# TODO: Support not also UEFI bootloader configuration change.
+#
 
 import stat
 import os
