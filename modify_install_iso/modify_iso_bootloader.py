@@ -20,6 +20,10 @@ ISOLINUX_PATH = "isolinux/isolinux.cfg"
 INITRD_NAME = "overlay.img"
 
 
+RO_PERMISSION = stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
+RW_PERMISSION = stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH | RO_PERMISSION
+
+
 def parse_args():
     """Parse arguments for this tool."""
     parser = ArgumentParser(description="Tool to create testing DVD with multiple repositories.")
@@ -93,8 +97,7 @@ def _copy_file(source_file, dest_path):
     :param str dest_path: destination path
     """
     copy2(source_file, dest_path)
-    # set 444 mod
-    os.chmod(dest_path, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+    os.chmod(dest_path, RO_PERMISSION)
 
 
 def _make_graft_dirs(graft_dir, dest_file_path):
@@ -130,6 +133,7 @@ def inject_initrd_overlay_to_iso(iso, dest_iso, initrd_overlay_path):
 
 def _add_overlay_to_isolinux_config(isolinux_path, bootloader_initrd_path):
     """Inject initrd to the isolinux configuration file."""
+    os.chmod(isolinux_path, RW_PERMISSION)
     content = ""
 
     with open(isolinux_path, 'rt') as f:
@@ -140,6 +144,7 @@ def _add_overlay_to_isolinux_config(isolinux_path, bootloader_initrd_path):
 
     with open(isolinux_path, 'wt') as f:
         f.write(content)
+    os.chmod(isolinux_path, RO_PERMISSION)
 
 
 if __name__ == "__main__":
