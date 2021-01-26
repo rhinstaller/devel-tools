@@ -22,7 +22,8 @@ class ParseArgs(ArgumentParser):
         super().__init__()
 
         self._branch_group = self.add_mutually_exclusive_group(required=True)
-
+        self.add_argument("-d", dest="directory", action="store",
+                          help="use the specified path to the anaconda folder")
         self.add_argument("-a", dest="alternative_dir", action="store_true",
                           help="use alternative anaconda-2 folder")
         self.add_argument("-p", dest="push_only", action="store_true",
@@ -70,7 +71,11 @@ class ParseArgs(ArgumentParser):
         if self.nm.push_only:
             GlobalSettings.push_only = True
         if self.nm.alternative_dir:
-            GlobalSettings.anaconda_path = "anaconda-2"
+            GlobalSettings.anaconda_path = os.path.join(
+                GlobalSettings.projects_path, "anaconda-2"
+            )
+        if self.nm.directory:
+            GlobalSettings.anaconda_path = self.nm.directory
         for addon in self.nm.add_addon:
             expanded = os.path.expanduser(addon[0])
             GlobalSettings.add_addon.append(os.path.normpath(expanded))
@@ -148,12 +153,14 @@ class Executor(object):
 
     def prepare(self):
         try:
-            os.makedirs(os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates"))
+            os.makedirs(os.path.join(
+                GlobalSettings.anaconda_path,
+                "updates/run/install/updates"
+            ))
         except os.error as e:
             print("Updates directory exists already")
 
         image_img_path = os.path.join(
-            GlobalSettings.projects_path,
             GlobalSettings.anaconda_path,
             "updates"
         )
@@ -172,7 +179,6 @@ class Executor(object):
                 print("Can't unpack the image")
 
         addon_img_path = os.path.join(
-            GlobalSettings.projects_path,
             GlobalSettings.anaconda_path,
             "updates/usr/share/anaconda/addons/"
         )
@@ -195,7 +201,7 @@ class Executor(object):
         if GlobalSettings.use_blivet:
             print("Copy blivet...")
             source = os.path.join(GlobalSettings.projects_path, "blivet/blivet")
-            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/blivet")
+            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/blivet")
             try:
                 shutil.copytree(source, dest)
             except FileExistsError as e:
@@ -204,7 +210,7 @@ class Executor(object):
         if GlobalSettings.use_pykickstart:
             print("Copy pykickstart...")
             source = os.path.join(GlobalSettings.projects_path, "pykickstart/pykickstart")
-            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/pykickstart")
+            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/pykickstart")
             try:
                 shutil.copytree(source, dest)
             except FileExistsError as e:
@@ -213,7 +219,7 @@ class Executor(object):
         if GlobalSettings.use_simpleline:
             print("Copy simpleline...")
             source = os.path.join(GlobalSettings.projects_path, "simpleline/simpleline")
-            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/simpleline")
+            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/simpleline")
             try:
                 shutil.copytree(source, dest)
             except FileExistsError as e:
@@ -222,14 +228,14 @@ class Executor(object):
         if GlobalSettings.use_dasbus:
             print("Copy dasbus...")
             source = os.path.join(GlobalSettings.projects_path, "dasbus/dasbus")
-            dest = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates/run/install/updates/dasbus")
+            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/dasbus")
             try:
                 shutil.copytree(source, dest)
             except FileExistsError as e:
                 print("Skipping simpleline copy:", str(e))
 
     def create_updates_img(self, command):
-        os.chdir(os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path))
+        os.chdir(GlobalSettings.anaconda_path)
         print("Calling command:", command)
 
         popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -243,7 +249,7 @@ class Executor(object):
 
     def upload_image(self):
         img_name = GlobalSettings.image_name if GlobalSettings.image_name is not None else self._branch_obj.img_name
-        src = os.path.join(GlobalSettings.projects_path, GlobalSettings.anaconda_path, "updates.img")
+        src = os.path.join(GlobalSettings.anaconda_path, "updates.img")
         dst_local = os.path.join(GlobalSettings.local_path, img_name)
 
         if GlobalSettings.server:
@@ -283,6 +289,16 @@ if __name__ == "__main__":
         instances.append(inst)
 
     nm = parser.parse_args()
+
+    if not os.path.isdir(GlobalSettings.projects_path):
+        raise DirectoryNotFoundError(
+            "Can't find directory {}".format(GlobalSettings.projects_path)
+        )
+
+    if not os.path.isdir(os.path.join(GlobalSettings.anaconda_path)):
+        raise DirectoryNotFoundError(
+            "Can't find directory {}".format(GlobalSettings.anaconda_path)
+        )
 
     for branch_inst in instances:
         if branch_inst.type == nm.branch:
