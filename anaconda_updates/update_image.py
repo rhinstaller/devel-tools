@@ -155,7 +155,7 @@ class Executor(object):
         try:
             os.makedirs(os.path.join(
                 GlobalSettings.anaconda_path,
-                "updates/run/install/updates"
+                "updates"
             ))
         except os.error as e:
             print("Updates directory exists already")
@@ -198,40 +198,50 @@ class Executor(object):
             except FileExistsError as e:
                 print("Can't copy addon")
 
+        site_packages_path = os.path.join(
+            GlobalSettings.anaconda_path,
+            "updates",
+            branch.site_packages
+        )
+
         if GlobalSettings.use_blivet:
             print("Copy blivet...")
             source = os.path.join(GlobalSettings.projects_path, "blivet/blivet")
-            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/blivet")
+            dest = os.path.join(site_packages_path, "blivet")
             try:
+                os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
-            except FileExistsError as e:
+            except OSError as e:
                 print("Skipping blivet copy:", str(e))
 
         if GlobalSettings.use_pykickstart:
             print("Copy pykickstart...")
             source = os.path.join(GlobalSettings.projects_path, "pykickstart/pykickstart")
-            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/pykickstart")
+            dest = os.path.join(site_packages_path, "pykickstart")
             try:
+                os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
-            except FileExistsError as e:
+            except OSError as e:
                 print("Skipping pykickstart copy:", str(e))
 
         if GlobalSettings.use_simpleline:
             print("Copy simpleline...")
             source = os.path.join(GlobalSettings.projects_path, "simpleline/simpleline")
-            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/simpleline")
+            dest = os.path.join(site_packages_path, "simpleline")
             try:
+                os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
-            except FileExistsError as e:
+            except OSError as e:
                 print("Skipping dasbus copy:", str(e))
 
         if GlobalSettings.use_dasbus:
             print("Copy dasbus...")
             source = os.path.join(GlobalSettings.projects_path, "dasbus/dasbus")
-            dest = os.path.join(GlobalSettings.anaconda_path, "updates/run/install/updates/dasbus")
+            dest = os.path.join(site_packages_path, "dasbus")
             try:
+                os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
-            except FileExistsError as e:
+            except OSError as e:
                 print("Skipping simpleline copy:", str(e))
 
     def create_updates_img(self, command):

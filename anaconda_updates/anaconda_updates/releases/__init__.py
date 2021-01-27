@@ -50,7 +50,8 @@ class GeneralBranch(object):
                  blivet_args=[],
                  pykickstart_args=[],
                  simpleline_args=[],
-                 dasbus_args=[]):
+                 dasbus_args=[],
+                 site_packages="./run/install/updates/"):
 
         self.type = branch_type
         self.cmd_args = cmd_args
@@ -63,6 +64,7 @@ class GeneralBranch(object):
         self.simpleline_args = simpleline_args
         self.dasbus_args = dasbus_args
         self.show_version_params = version_script_params
+        self.site_packages = site_packages
 
     @property
     def version(self):
