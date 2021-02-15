@@ -232,7 +232,7 @@ class Executor(object):
                 os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
             except OSError as e:
-                print("Skipping dasbus copy:", str(e))
+                print("Skipping simpleline copy:", str(e))
 
         if GlobalSettings.use_dasbus:
             print("Copy dasbus...")
@@ -242,7 +242,7 @@ class Executor(object):
                 os.makedirs(site_packages_path, exist_ok=True)
                 shutil.copytree(source, dest)
             except OSError as e:
-                print("Skipping simpleline copy:", str(e))
+                print("Skipping dasbus copy:", str(e))
 
     def create_updates_img(self, command):
         os.chdir(GlobalSettings.anaconda_path)
