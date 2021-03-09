@@ -7,4 +7,4 @@ class Fedora33Branch(GeneralBranch):
         super().__init__(branch_type=Branch.fedora33,
                          cmd_args=["-f33", "--fedora33"],
                          help="working on Fedora 33",
-                         version_script_params=["-f33", "-p"])
+                         version="33.25.4")
