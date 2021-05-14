@@ -47,6 +47,8 @@ class ParseArgs(ArgumentParser):
                           help=("copy simpleline to updates image."))
         self.add_argument("--dasbus", dest="use_dasbus", action="store_true",
                           help=("copy dasbus to updates image."))
+        self.add_argument("--meh", dest="use_meh", action="store_true",
+                          help=("copy python-meh to updates image."))
         self.add_argument("--add-addon", dest="add_addon", nargs=1, action="append",
                           default=[], metavar="path",
                           help=("add addon to the updates image structure. "
@@ -94,6 +96,8 @@ class ParseArgs(ArgumentParser):
             GlobalSettings.use_simpleline = True
         if self.nm.use_dasbus:
             GlobalSettings.use_dasbus = True
+        if self.nm.use_meh:
+            GlobalSettings.use_meh = True
         if self.nm.image_name:
             GlobalSettings.image_name = self.nm.image_name
 
@@ -129,6 +133,8 @@ class CreateCommand(object):
                 input_args.extend(self._branch_obj.simpleline_args)
             if GlobalSettings.use_dasbus:
                 input_args.extend(self._branch_obj.dasbus_args)
+            if GlobalSettings.use_meh:
+                input_args.extend(self._branch_obj.meh_args)
 
             for rpm in GlobalSettings.add_RPM:
                 input_args.extend(["-a", rpm])
@@ -215,6 +221,9 @@ class Executor(object):
 
         if GlobalSettings.use_dasbus:
             self._copy_project("dasbus", "dasbus", site_packages_path)
+
+        if GlobalSettings.use_meh:
+            self._copy_project("meh", "python-meh", site_packages_path)
 
     def _copy_project(self, name, root_dir, site_packages_path):
         print("Copy {}...".format(name))

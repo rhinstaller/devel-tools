@@ -53,6 +53,7 @@ class GeneralBranch(object):
                  pykickstart_args=[],
                  simpleline_args=[],
                  dasbus_args=[],
+                 meh_args=[],
                  site_packages="./run/install/updates/"):
 
         self.type = branch_type
@@ -65,6 +66,7 @@ class GeneralBranch(object):
         self.pykickstart_args = pykickstart_args
         self.simpleline_args = simpleline_args
         self.dasbus_args = dasbus_args
+        self.meh_args = meh_args
         self.show_version_params = version_script_params
         self.site_packages = site_packages
 
