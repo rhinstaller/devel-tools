@@ -205,44 +205,26 @@ class Executor(object):
         )
 
         if GlobalSettings.use_blivet:
-            print("Copy blivet...")
-            source = os.path.join(GlobalSettings.projects_path, "blivet/blivet")
-            dest = os.path.join(site_packages_path, "blivet")
-            try:
-                os.makedirs(site_packages_path, exist_ok=True)
-                shutil.copytree(source, dest)
-            except OSError as e:
-                print("Skipping blivet copy:", str(e))
+            self._copy_project("blivet", "blivet", site_packages_path)
 
         if GlobalSettings.use_pykickstart:
-            print("Copy pykickstart...")
-            source = os.path.join(GlobalSettings.projects_path, "pykickstart/pykickstart")
-            dest = os.path.join(site_packages_path, "pykickstart")
-            try:
-                os.makedirs(site_packages_path, exist_ok=True)
-                shutil.copytree(source, dest)
-            except OSError as e:
-                print("Skipping pykickstart copy:", str(e))
+            self._copy_project("pykickstart", "pykickstart", site_packages_path)
 
         if GlobalSettings.use_simpleline:
-            print("Copy simpleline...")
-            source = os.path.join(GlobalSettings.projects_path, "simpleline/simpleline")
-            dest = os.path.join(site_packages_path, "simpleline")
-            try:
-                os.makedirs(site_packages_path, exist_ok=True)
-                shutil.copytree(source, dest)
-            except OSError as e:
-                print("Skipping simpleline copy:", str(e))
+            self._copy_project("simpleline", "simpleline", site_packages_path)
 
         if GlobalSettings.use_dasbus:
-            print("Copy dasbus...")
-            source = os.path.join(GlobalSettings.projects_path, "dasbus/dasbus")
-            dest = os.path.join(site_packages_path, "dasbus")
-            try:
-                os.makedirs(site_packages_path, exist_ok=True)
-                shutil.copytree(source, dest)
-            except OSError as e:
-                print("Skipping dasbus copy:", str(e))
+            self._copy_project("dasbus", "dasbus", site_packages_path)
+
+    def _copy_project(self, name, root_dir, site_packages_path):
+        print("Copy {}...".format(name))
+        source = os.path.join(GlobalSettings.projects_path, "{}/{}".format(root_dir, name))
+        dest = os.path.join(site_packages_path, name)
+        try:
+            os.makedirs(site_packages_path, exist_ok=True)
+            shutil.copytree(source, dest)
+        except OSError as e:
+            print("Skipping {} copy: {}".format(name, str(e)))
 
     def create_updates_img(self, command):
         os.chdir(GlobalSettings.anaconda_path)
