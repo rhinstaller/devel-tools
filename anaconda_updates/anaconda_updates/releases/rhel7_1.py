@@ -9,8 +9,7 @@ class Rhel7_1Branch(GeneralBranch):
                          cmd_args=["-rh7.1", "--rhel7.1"],
                          help="working on RHEL7",
                          version="19.31.123",
-                         img_name="rhel7.1_updates.img",
-                         blivet_args=[], pykickstart_args=[])
+                         img_name="rhel7.1_updates.img")
 
         GlobalSettings.use_blivet = False
         GlobalSettings.use_pykickstart = False

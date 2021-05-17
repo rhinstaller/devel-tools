@@ -49,11 +49,6 @@ class GeneralBranch(object):
                  cmd_args, help,
                  version="", version_script_params=[], img_name="master_updates.img",
                  mkupdates_args=[],
-                 blivet_args=[],
-                 pykickstart_args=[],
-                 simpleline_args=[],
-                 dasbus_args=[],
-                 meh_args=[],
                  site_packages="./run/install/updates/"):
 
         self.type = branch_type
@@ -62,11 +57,6 @@ class GeneralBranch(object):
         self._version = version
         self.img_name = img_name
         self.input_args = mkupdates_args
-        self.blivet_args = blivet_args
-        self.pykickstart_args = pykickstart_args
-        self.simpleline_args = simpleline_args
-        self.dasbus_args = dasbus_args
-        self.meh_args = meh_args
         self.show_version_params = version_script_params
         self.site_packages = site_packages
 

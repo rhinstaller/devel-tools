@@ -125,17 +125,6 @@ class CreateCommand(object):
             if compile:
                 cmd.append("-c")
 
-            if GlobalSettings.use_blivet:
-                input_args.extend(self._branch_obj.blivet_args)
-            if GlobalSettings.use_pykickstart:
-                input_args.extend(self._branch_obj.pykickstart_args)
-            if GlobalSettings.use_simpleline:
-                input_args.extend(self._branch_obj.simpleline_args)
-            if GlobalSettings.use_dasbus:
-                input_args.extend(self._branch_obj.dasbus_args)
-            if GlobalSettings.use_meh:
-                input_args.extend(self._branch_obj.meh_args)
-
             for rpm in GlobalSettings.add_RPM:
                 input_args.extend(["-a", rpm])
 
