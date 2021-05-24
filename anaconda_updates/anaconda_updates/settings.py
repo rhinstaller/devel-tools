@@ -34,6 +34,7 @@ class GlobalSettings(object):
     use_pykickstart = False
     use_simpleline = False
     use_dasbus = False
+    use_meh = False
 
     @classmethod
     def read_configuration(cls):
