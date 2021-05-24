@@ -19,7 +19,7 @@ do
          shift
          ;;
         -rh8)
-         PACKAGES_URL="rhel8/Packages"
+         PACKAGES_URL="rhel8_appstream/Packages"
          shift
          ;;
         -rh9)
