@@ -22,6 +22,10 @@ do
          PACKAGES_URL="rhel8/Packages"
          shift
          ;;
+        -rh9)
+         PACKAGES_URL="rhel9_appstream/Packages"
+         shift
+         ;;
         -f23)
          PACKAGES_URL="fedora23/Packages/a"
          shift
