@@ -12,8 +12,8 @@ Requires Python 3.6+ (3.7+?), docopt, QEMU, netcat.
 
 Usage:
   ./reanaconda.py prime [--tree <url>] [--append <extra_cmdline>] [--sensible]
-                        <qemu_args>...
-  ./reanaconda.py updates [<updates.img>]
+                        [--variable-kickstart] <qemu_args>...
+  ./reanaconda.py updates [--kickstart <kspath>] <updates.img>
   ./reanaconda.py cleanup
   ./reanaconda.py --help
 
@@ -22,6 +22,8 @@ Options:
   --tree <url>              Fetch files and install from a specific tree url.
   --sensible                Use some sensible preconfigured QEMU arguments.
   --append <extra_cmdline>  Extra cmdline arguments to append.
+  --variable-kickstart      Supply different kickstarts later with --kickstart.
+  --kickstart <kspath>      Path to a kickstart, needs --variable-kickstart.
   <qemu_args>               Extra QEMU options to use.
   <updates.img>             An updates image to restart with.
 
@@ -43,6 +45,7 @@ import shutil
 import socket
 import socketserver
 import subprocess
+import sys
 import threading
 import time
 import urllib.request
@@ -56,6 +59,8 @@ QEMU_SENSIBLE_ARGUMENTS = [
     '-drive', 'file=reanaconda/disk.img,cache=unsafe,if=virtio',
     '-monitor', 'stdio',
 ]
+CMDLINE_UPDATES = 'inst.updates=http://10.0.2.22/updates.img'
+CMDLINE_KICKSTART = 'inst.ks=http://10.0.2.22/kickstart'
 
 
 class DaemonHTTPServer(http.server.HTTPServer, socketserver.ThreadingMixIn):
@@ -90,20 +95,18 @@ def start_a_503_server(callback):
     return port
 
 
-def start_a_single_file_server(path):
+def start_a_file_server(path_mapping):
     """
-    Start an HTTP server on a specified port
-    that serves one file and one file only
-    :param path: the path to the file to serve
-    :param port: a port number to listen at
+    Start an HTTP server that serves files specified in the mapping argument.
+    :param path_mapping: HTTP path to filesystem file path mapping
     :returns: port number where it's listening
     :rtype: int
     """
     class Handler(http.server.SimpleHTTPRequestHandler):
         protocol_version = 'HTTP/1.1'
 
-        def translate_path(self, _unused_path):
-            return path
+        def translate_path(self, path):
+            return path_mapping[path]
 
     httpd = DaemonHTTPServer(('127.0.0.1', 0), Handler)
     _, port = httpd.socket.getsockname()
@@ -129,11 +132,8 @@ def _download(url, to):
 class QEMU:
     def __init__(self, qemu_args, append):
         self.qemu_args = qemu_args
-        if append:
-            self.qemu_args += ['-append',
-                               f'inst.updates=http://10.0.2.22 {append}']
-        else:
-            self.qemu_args += ['-append', 'inst.updates=http://10.0.2.22']
+        append += f' {CMDLINE_UPDATES} '
+        self.qemu_args += ['-append', append]
         self.ssh = 'inst.sshd' in append
 
     def run(self, http_port, loadvm=None, second_time=False):
@@ -219,7 +219,9 @@ def prime(qemu_args, append, fetch_from=None):
         with open('reanaconda/qemu.pickle', 'wb') as f:
             pickle.dump(qemu, f)
         saving_done.set()
-        print('priming is done. resume with `reanaconda updates <updates.img>')
+        print('priming is complete.')
+        print('continue with `reanaconda updates '
+              ' [--kickstart <path>] <updates.img>`')
     http_port = start_a_503_server(cb)
 
     qemu.run(http_port)
@@ -228,12 +230,16 @@ def prime(qemu_args, append, fetch_from=None):
     print('exiting')
 
 
-def updates(updates_img):
+def updates(updates_img, kickstart=None):
     if not os.path.isdir('reanaconda'):
         raise SystemExit('`reanaconda prime` first')
     with open('reanaconda/qemu.pickle', 'rb') as f:
         qemu = pickle.load(f)
-    http_port = start_a_single_file_server(updates_img)
+
+    file_mapping = {'/updates.img': updates_img}
+    if kickstart:
+        file_mapping['/kickstart'] = kickstart
+    http_port = start_a_file_server(file_mapping)
     time.sleep(.5)
     qemu.run(http_port, loadvm='preupdates', second_time=True)
 
@@ -244,22 +250,29 @@ def cleanup():
 
 
 if __name__ == '__main__':
-    args = docopt.docopt(__doc__, options_first=True)
-    if args['prime']:
+    if len(sys.argv) < 2 or '--help' in sys.argv:
+        print(__doc__)
+        sys.exit(1)
+    if sys.argv[1] == 'prime':
+        args = docopt.docopt(__doc__, options_first=True)
         append, tree, qemu_args = '', None, args['<qemu_args>']
         while (qemu_args and
                qemu_args[0] in ('--append', '--sensible', '--tree')):
             if qemu_args[0] == '--append':
                 qemu_args.pop(0)
-                append = qemu_args.pop(0)
+                append += f' {qemu_args.pop(0)} '
             if qemu_args[0] == '--sensible':
                 qemu_args.pop(0)
                 qemu_args += QEMU_SENSIBLE_ARGUMENTS
             if qemu_args[0] == '--tree':
                 qemu_args.pop(0)
                 tree = qemu_args.pop(0)
+            if qemu_args[0] == '--variable-kickstart':
+                qemu_args.pop(0)
+                append += f' {CMDLINE_KICKSTART} '
         prime(qemu_args, append, fetch_from=tree)
-    elif args['updates']:
-        updates(args['<updates.img>'])
-    elif args['cleanup']:
+    if sys.argv[1] == 'updates':
+        args = docopt.docopt(__doc__)
+        updates(args['<updates.img>'], args['--kickstart'])
+    if sys.argv[1] == 'cleanup':
         cleanup()
