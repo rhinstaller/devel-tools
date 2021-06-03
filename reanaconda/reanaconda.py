@@ -255,6 +255,7 @@ if __name__ == '__main__':
         sys.exit(1)
     if sys.argv[1] == 'prime':
         args = docopt.docopt(__doc__, options_first=True)
+        sensible, variable_kickstart = False, False
         append, tree, qemu_args = '', None, args['<qemu_args>']
         while (qemu_args and
                qemu_args[0] in ('--append', '--sensible', '--tree')):
@@ -264,12 +265,21 @@ if __name__ == '__main__':
             if qemu_args[0] == '--sensible':
                 qemu_args.pop(0)
                 qemu_args += QEMU_SENSIBLE_ARGUMENTS
+                sensible = True
             if qemu_args[0] == '--tree':
                 qemu_args.pop(0)
                 tree = qemu_args.pop(0)
             if qemu_args[0] == '--variable-kickstart':
                 qemu_args.pop(0)
                 append += f' {CMDLINE_KICKSTART} '
+                variable_kickstart = True
+        if sensible and not variable_kickstart:
+            print('+' + '-'*80 + '+')
+            print("| Without --variable-kickstart, you won't be able "
+                  'to supply --kickstart later.   |')
+            print('| Interrupt (^C), cleanup and retry '
+                  'with --variable-kickstart if you planned to. |')
+            print('+' + '-'*80 + '+')
         prime(qemu_args, append, fetch_from=tree)
     if sys.argv[1] == 'updates':
         args = docopt.docopt(__doc__)
