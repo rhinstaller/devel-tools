@@ -19,8 +19,15 @@ $ # or: echo updates.img | entr -r ./scripts/reanaconda updates updates.img
 $ ./reanaconda.py cleanup
 ```
 
-# Notes
+# Tips
 
-To switch TTY the QEMU console will automatically connect to the
-terminal with reanaconda. You can switch console by writing
-'sendkey ctrl-alt-f1'.
+* The terminal will show QEMU monitor of the VM, allowing some control over it.
+  E.g., issue `sendkey ctrl-alt-f1` to switch the VM to the console,
+  use `q` to quit, etc.
+* If you pass `--append inst.sshd`, a port will be forwarded for you,
+  check the output during the `updates` phase.
+* This tool can be used to quickly test the installation with different
+  kickstarts. You can point the installer to your own server, or
+  you can use a built-in one by supplying `--variable-kickstart`
+  during the `prime` phase; in the latter case
+  you'll have to provide one with `--kickstart` in the `updates` phase.
