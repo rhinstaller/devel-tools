@@ -14,6 +14,12 @@ fusermount
 pungi-patch-iso
 ```
 
+And these python libraries:
+
+```
+rpmfluff
+```
+
 ## What can be found here
 
 Below you will find scripts which should help you with your tasks:

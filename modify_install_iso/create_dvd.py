@@ -82,7 +82,7 @@ def _create_fake_rpm(temp_dir):
 
 
 def _create_repo(repo_dir):
-    subprocess_call(["createrepo_c", repo_dir], VERBOSE)
+    subprocess_call(["createrepo_c", repo_dir], verbose=VERBOSE)
 
 
 @contextmanager
