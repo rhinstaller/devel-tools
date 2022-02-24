@@ -8,4 +8,5 @@ class Rhel9Branch(GeneralBranch):
                          cmd_args=["-rh9", "--rhel9"],
                          help="working on RHEL 9",
                          img_name="rhel9_updates.img",
-                         version_script_params=["-rh9", "-p"])
+                         version_script_params=["-rh9", "-p"],
+                         site_packages="./usr/lib/python3.9/site-packages/")
