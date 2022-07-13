@@ -30,6 +30,8 @@ class Branch(Enum):
     fedora33 = 13,
     fedora34 = 14,
     fedora35 = 15,
+    fedora36 = 16,
+    fedora37 = 17,
 
     rhel6    = 50,
     rhel6_8  = 51,
