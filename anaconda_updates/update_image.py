@@ -129,13 +129,16 @@ class CreateCommand(object):
                 input_args.extend(["-a", rpm])
 
             if GlobalSettings.target:
-                commit_version = GlobalSettings.target
+                cmd.extend(["-t", GlobalSettings.target])
             else:
                 version = self._branch_obj.version
-                commit_version = "anaconda-" + version + "-1"
 
-            cmd.append("-t")
-            cmd.append(commit_version)
+                if version:
+                    commit_version = "anaconda-" + version + "-1"
+                    cmd.extend(["-t", commit_version])
+                else:
+                    print("Using the latest tag.")
+
             cmd.extend(input_args)
 
         return cmd

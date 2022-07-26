@@ -67,17 +67,18 @@ class GeneralBranch(object):
     def version(self):
         if self._version:
             return self._version
-        else:
-            ver = self.get_version()
-            if not ver:
-                raise ValueError("Anaconda version is not known")
 
-            return ver
+        return self._get_version()
 
     def add_argument(self, parse_args):
         parse_args.add_branch_param(*self.cmd_args, const_val=self.type,
                                     help=self.help)
 
-    def get_version(self):
+    def _get_version(self):
+        if not GlobalSettings.show_version_script_path:
+            print("There is no script for detection of the Anaconda version.")
+            return None
+
         path = os.path.expanduser(GlobalSettings.show_version_script_path)
-        return subprocess.check_output([path, *self.show_version_params]).decode()[:-1]
+        version = subprocess.check_output([path, *self.show_version_params]).decode()[:-1]
+        return version
