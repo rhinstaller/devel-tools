@@ -14,7 +14,7 @@ class GlobalSettings(object):
     server = None         # Server with PXE which you are using to test anaconda; could be None
     server_path = "~"     # Server path for saving updates image; default '~'
     local_path = "/tmp"   # Local path to the image; default "/tmp"
-    show_version_script_path = ""
+    show_version_script_path = None
 
     #######################
     # Run specific configuration
@@ -43,7 +43,7 @@ class GlobalSettings(object):
             config.read_file(f_cfg)
             global_settings = config["GlobalSettings"]
             cls.projects_path = global_settings["ProjectsPath"] # must be specified in config file
-            cls.show_version_script_path = global_settings["ShowVersionScriptPath"]
+            cls.show_version_script_path = global_settings.get("ShowVersionScriptPath", None)
             cls.anaconda_path = os.path.join(
                 cls.projects_path, global_settings.get("anaconda_pathName", "anaconda")
             )
