@@ -52,6 +52,8 @@ import urllib.request
 
 import docopt
 
+from urllib.error import HTTPError
+
 QEMU_SENSIBLE_ARGUMENTS = [
     '-enable-kvm', '-machine', 'q35', '-cpu', 'host', '-smp', '2', '-m', '2G',
     '-object', 'rng-random,id=rng0,filename=/dev/urandom',
@@ -61,6 +63,18 @@ QEMU_SENSIBLE_ARGUMENTS = [
 ]
 CMDLINE_UPDATES = 'inst.updates=http://10.0.2.22/updates.img'
 CMDLINE_KICKSTART = 'inst.ks=http://10.0.2.22/kickstart'
+
+
+def check_dependencies():
+    ok = True
+    if not shutil.which("qemu-system-x86_64"):
+        print("'qemu-system-x86_64' needs to be installed!", file=sys.stderr)
+        ok = False
+    if not shutil.which("qemu-img"):
+        print("'qemu-img' needs to be installed!", file=sys.stderr)
+        ok = False
+
+    return ok
 
 
 class DaemonHTTPServer(http.server.HTTPServer, socketserver.ThreadingMixIn):
@@ -200,8 +214,7 @@ def prime(qemu_args, append, fetch_from=None):
                     'reanaconda/disk.img', '20G'])
 
     if fetch_from:
-        _download(f'{fetch_from}/isolinux/vmlinuz', 'reanaconda/vmlinuz')
-        _download(f'{fetch_from}/isolinux/initrd.img', 'reanaconda/initrd.img')
+        _fetch_boot_files(fetch_from)
         qemu_args += ['-kernel', 'reanaconda/vmlinuz',
                       '-initrd', 'reanaconda/initrd.img']
         append += f' inst.stage2={fetch_from}'
@@ -229,6 +242,16 @@ def prime(qemu_args, append, fetch_from=None):
     saving_done.wait()
     print('exiting')
 
+def _fetch_boot_files(url):
+    try:
+        _download(f'{url}/images/pxeboot/vmlinuz', 'reanaconda/vmlinuz')
+        _download(f'{url}/images/pxeboot/initrd.img', 'reanaconda/initrd.img')
+    except HTTPError as ex:
+        print(f"Can't download {url}: {ex}")
+        print(f"Trying older isolinux/ path instead")
+        _download(f'{url}/isolinux/vmlinuz', 'reanaconda/vmlinuz')
+        _download(f'{url}/isolinux/initrd.img', 'reanaconda/initrd.img')
+
 
 def updates(updates_img, kickstart=None):
     if not os.path.isdir('reanaconda'):
@@ -250,6 +273,9 @@ def cleanup():
 
 
 if __name__ == '__main__':
+    # early quit if dependencies are not installed in the system
+    check_dependencies()
+
     if len(sys.argv) < 2 or '--help' in sys.argv:
         print(__doc__)
         sys.exit(1)
