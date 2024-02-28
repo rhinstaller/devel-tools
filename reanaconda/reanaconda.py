@@ -63,6 +63,18 @@ CMDLINE_UPDATES = 'inst.updates=http://10.0.2.22/updates.img'
 CMDLINE_KICKSTART = 'inst.ks=http://10.0.2.22/kickstart'
 
 
+def check_dependencies():
+    ok = True
+    if not shutil.which("qemu-system-x86_64"):
+        print("'qemu-system-x86_64' needs to be installed!", file=sys.stderr)
+        ok = False
+    if not shutil.which("qemu-img"):
+        print("'qemu-img' needs to be installed!", file=sys.stderr)
+        ok = False
+
+    return ok
+
+
 class DaemonHTTPServer(http.server.HTTPServer, socketserver.ThreadingMixIn):
     daemon_threads = True
 
@@ -250,6 +262,9 @@ def cleanup():
 
 
 if __name__ == '__main__':
+    # early quit if dependencies are not installed in the system
+    check_dependencies()
+
     if len(sys.argv) < 2 or '--help' in sys.argv:
         print(__doc__)
         sys.exit(1)
