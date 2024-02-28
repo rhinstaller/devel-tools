@@ -52,6 +52,8 @@ import urllib.request
 
 import docopt
 
+from urllib.error import HTTPError
+
 QEMU_SENSIBLE_ARGUMENTS = [
     '-enable-kvm', '-machine', 'q35', '-cpu', 'host', '-smp', '2', '-m', '2G',
     '-object', 'rng-random,id=rng0,filename=/dev/urandom',
@@ -212,8 +214,7 @@ def prime(qemu_args, append, fetch_from=None):
                     'reanaconda/disk.img', '20G'])
 
     if fetch_from:
-        _download(f'{fetch_from}/isolinux/vmlinuz', 'reanaconda/vmlinuz')
-        _download(f'{fetch_from}/isolinux/initrd.img', 'reanaconda/initrd.img')
+        _fetch_boot_files(fetch_from)
         qemu_args += ['-kernel', 'reanaconda/vmlinuz',
                       '-initrd', 'reanaconda/initrd.img']
         append += f' inst.stage2={fetch_from}'
@@ -240,6 +241,16 @@ def prime(qemu_args, append, fetch_from=None):
     print('saved')
     saving_done.wait()
     print('exiting')
+
+def _fetch_boot_files(url):
+    try:
+        _download(f'{url}/images/pxeboot/vmlinuz', 'reanaconda/vmlinuz')
+        _download(f'{url}/images/pxeboot/initrd.img', 'reanaconda/initrd.img')
+    except HTTPError as ex:
+        print(f"Can't download {url}: {ex}")
+        print(f"Trying older isolinux/ path instead")
+        _download(f'{url}/isolinux/vmlinuz', 'reanaconda/vmlinuz')
+        _download(f'{url}/isolinux/initrd.img', 'reanaconda/initrd.img')
 
 
 def updates(updates_img, kickstart=None):
